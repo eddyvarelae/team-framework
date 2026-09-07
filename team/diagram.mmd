@@ -1,0 +1,53 @@
+flowchart TB
+
+  HUMAN(["YOU - THE BUS<br/>final decisions · credentials · boot each session<br/>every note between agents travels through you · agents draft, you send"])
+
+  PLANNER["PLANNER<br/>what gets built and in what order<br/>never writes code"]
+  DEV["DEV<br/>builds top-down, evidence on every check-off<br/>covers design + infra while optionals are unbooted"]
+  TESTER["TESTER<br/>verifies on the real system · daily-drives<br/>daily liveness glance"]
+
+  subgraph FILES["team/ - the only shared memory"]
+    direction TB
+    BACKLOG["BACKLOG.md<br/>one prioritized list, one item per fact"]
+    DQ["channels/dev-questions.md<br/>work order on top, Q&A below"]
+    TF["channels/tester-feedback.md<br/>numbered findings"]
+    DEC["DECISIONS.md<br/>any agent that hears a human decision<br/>logs it here BEFORE acting"]
+    CTX["context/<br/>ground truth · sacred paths"]
+  end
+
+  PRODUCT["THE PRODUCT - project root, any shape<br/>who writes where: path-ownership table in TEAM.md"]
+  EXT["EXTERNAL AGENTS<br/>other projects' sessions"]
+  DESIGNER["DESIGNER - optional, unbooted"]
+  CLOUD["CLOUD - optional, unbooted"]
+
+  HUMAN <-->|"boot · decide · carry notes"| PLANNER
+  HUMAN <-->|"boot · decide · carry notes"| DEV
+  HUMAN <-->|"boot · decide · carry notes"| TESTER
+
+  PLANNER -->|"orders + scopes, strikes duplicates"| BACKLOG
+  DEV -->|"checks off with evidence rung"| BACKLOG
+  PLANNER -->|"work order - new one replaces old"| DQ
+  DQ -->|"top note = current job"| DEV
+  DEV -->|"questions · proposals · evidence"| DQ
+  TESTER -->|"files findings"| TF
+  TF -->|"triage: backlog item, reject, or question"| PLANNER
+  PLANNER -->|"keeps current, dated"| CTX
+  CTX -->|"read-only truth"| DEV
+  CTX -->|"read-only truth"| TESTER
+  HUMAN -.->|"decisions land here, whoever hears them"| DEC
+
+  DEV -->|"builds (own paths only)"| PRODUCT
+  TESTER -->|"verifies · lives in it"| PRODUCT
+  EXT -->|"ONLY through the Tester's documented interface"| TESTER
+  DESIGNER -.->|"when booted: restyles via own paths"| PRODUCT
+  CLOUD -.->|"when booted: deploys · CI/CD · accounts"| PRODUCT
+
+  style HUMAN fill:#ffb400,stroke:#0d0d0d,stroke-width:3px,color:#0d0d0d
+  style PLANNER fill:#0d0d0d,color:#ffffff
+  style DEV fill:#0d0d0d,color:#ffffff
+  style TESTER fill:#0d0d0d,color:#ffffff
+  style PRODUCT fill:#ffffff,stroke:#0d0d0d,stroke-width:2px
+  style EXT fill:#efece5,stroke:#999999,stroke-dasharray:6 4
+  style DESIGNER fill:#ffffff,color:#777777,stroke:#b5b0a4,stroke-dasharray:6 4
+  style CLOUD fill:#ffffff,color:#777777,stroke:#b5b0a4,stroke-dasharray:6 4
+  style FILES fill:#f2f8e8,stroke:#7aa93c
