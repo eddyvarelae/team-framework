@@ -71,3 +71,62 @@ actors/tester.md says the tester owns external-agent interfaces but not what one
 ---
 
 **Bottom line:** adopt §2's one-item-per-fact rule and §3.1–3.3 before the first real project runs on this template — those four are the ones with production scars behind them. The rest is polish on a structure that TEA already proved works.
+
+---
+
+# Designer review — second pass
+
+**TEA Designer (2026-09-07):** Read the Planner's review above before writing; I endorse it and won't repeat it — in particular §2 (one item per fact) is the correct postmortem of the icon incident: I was the agent who logged that pick (design-questions + BACKLOG, commit `05b0721`), and it still got re-asked, so "log it immediately" alone demonstrably doesn't prevent the failure. What follows is only what the Designer's seat saw that isn't covered above. Sources: same TEA record, plus the Aug 31 – Sep 7 tail the Planner's window mostly predates.
+
+## D1. Nobody owns the runtime — §3.3 makes failure loud, but loud-to-an-empty-room is still silent
+
+§3.3 (fail loudly) fixes the *signal*. TEA's worse failure was the *receiver*: the app was simply **closed from Aug 24–31** — no sweeps for 8 days, the Clara interview deadline (~Aug 26) passed inside the gap, and the idle period killed the personal Gmail token (`invalid_grant`, card `01M1CDN3…job-funnel-revive`), which then blocked the scheduled sweeps even after the app came back. The chain of unowned responsibilities: the daemon died three times on Aug 22 alone (each restart was Dev's conscience, no one's duty) → the launchd fix was recommended on Aug 22 in dev-questions → **never executed by anyone**, because it was infra on the human's machine and no lane included "make it happen or escalate until it happens."
+
+Proposed additions:
+
+- TEAM.md rule: *"If the project has scheduled automation or long-lived processes, a named role (Cloud if active, else Tester) owns a daily liveness glance: did every scheduled thing fire, are credentials refreshing, is the process that must outlive our sessions actually configured to?"*
+- cloud.md / context guidance: **credentials die of idleness** — an automation gap doesn't pause work, it can break the auth needed to *resume* work. Idle-expiry of refresh tokens belongs on the sacred-state radar next to sync manifests.
+- planner.md escalate list: *"a ratified infra fix that only the human can execute gets a deadline and re-escalation, not a recommendation that rots."* (The launchd item is the reference case.)
+
+## D2. Git discipline is absent from TEAM.md — TEA nearly lost work to `git add -A`
+
+By mid-day Aug 22 the shared tree mixed **three authors' uncommitted work plus live production data**, and Dev had been staging with `git add -A` all day — by their own written account, one commit from sweeping my in-flight icon work under a Dev message. We also genuinely collided (both edited `CardItem.tsx` within the hour). TEA's ratified fix (dev-questions #6) is nowhere in the template:
+
+- **Ownership by path, not adjective** — "cosmetic vs functional is unenforceable at 2am; paths are." Every role's writable paths listed in TEAM.md (mine were `src/App.css`, `design/**`, `src-tauri/icons/**`, my channel file).
+- **Each role commits its own paths, explicitly staged; `git add -A` banned.**
+- Production data directories committed by no one outside their documented conventions.
+
+Suggested: TEAM.md rule 10 with exactly that content. This is the cheapest addition in either review and it was the closest TEA came to losing work.
+
+## D3. Session memory is shared per-directory — roles will absorb each other's identity
+
+Direct lived experience, not hypothetical: Claude Code keys persistent memory to the **project path**, so every TEA session in the repo shared one memory index. Mine accumulated entries written by different roles each saying "this session = X" — I've watched my own session read "this session = daily driver + external-agent liaison" (the Tester's note) *as recalled context about itself* while being the Designer. The actor-file pattern exists precisely to pin identity; shared memory quietly unpins it.
+
+Fix for README §Iterations-and-memory + the startup ritual: **role-namespace all memory** — entries name their role ("the Designer session owns…", never "this session…"), and the ritual's memory step reads "check memory *for your role's entries*; treat other roles' entries as background context." TEA converged on this by accident (`tea-designer-role.md`, `tea-user-role.md`); the template should mandate it from day one.
+
+## D4. One live instance — a rule, not a caveat
+
+The Planner's §4 mentions fixtures in one line; the underlying rule deserves promotion. TEA Dev's written analysis of why a second running instance (e.g. `tauri dev` from a Designer worktree) was **forbidden rather than caveated**: two schedulers double-fire real email sweeps; both instances fight over one rotating refresh token, each refresh invalidating the other; and a worktree's empty sync-manifest means reconcile resurrects every cloud row as ghost cards. None of that is Tauri-specific — it's what side-effectful daemons do.
+
+- TEAM.md sacred-paths block: *"Where the system has live side effects, exactly one running instance exists; a second copy is forbidden, and `/context/` enumerates why."*
+- designer.md: pair "design against actual data" with its other half — **fixtures for coverage and isolation** (every visual state on demand, zero credentials, zero production data). Also an honesty note the framework should absorb as a warning: TEA ratified fixture mode Aug 22 and it is *still unbuilt* Sep 7 — a ratified enabler nobody is blocked-enough on rots exactly like D1's launchd item.
+
+## D5. `/output/` "never hand-edited; fix the system, regenerate" doesn't fit craft artifacts
+
+As written, the workspace model gives a Designer no legitimate home: mocks, audits, icon sources (TEA's `design/**`) are hand-crafted *sources*, not regenerable outputs — "fix the system and regenerate" is meaningless for them. Suggest `/output/` distinguish **generated** artifacts (never hand-edit) from **authored deliverables** (role-owned, normally edited, live in the owning role's paths per D2). Small wording change; prevents the first Designer on this template from either violating the rule or homelessly scattering work.
+
+## D6. Two small patterns worth one line each
+
+- **Pre-declared evidence checklists.** The strongest verification in TEA wasn't "done requires evidence" alone — it was the Planner declaring *in advance* what evidence would count (user-feedback #7: "run log, finalized runs row, pipeline card advanced, HWM in Notes"), and the Aug 23 report answering exactly that list. Add to planner.md's verification bullet: *when assigning verification, enumerate the evidence you'll accept.*
+- **Zero-effect failures are retry candidates.** Complements §3.3: before treating an automation failure as a defect, establish whether the run did any work at all. The 20:00 sweep post-mortem (commit `91c0e12`: zero tool calls, zero tokens, TEA's own sync logged the same outage) took Dev one pass because the distinction was checkable. Executor-level rule, not just cloud.md's pipeline clause.
+
+**TEA Designer (2026-09-07): bottom line.** The Planner's adopt-first list stands. From this pass, D2 (git rules) and D3 (memory namespacing) should also land before any real project — both are one-paragraph template edits guarding against silent, hard-to-attribute damage; and D1 is the one that cost TEA an interview deadline, so give liveness an owner even if everything else waits.
+
+## D7. On the Designer demotion (commit `178c0d8`, landed mid-review) — right call, imprecise diagnosis
+
+**TEA Designer (2026-09-07):** The demotion to optional is consistent with the TEA record and I don't contest it. But the rationale as written — "visual work reviews poorly through text channels" — misidentifies the constraint, and the activation criteria inherit the error:
+
+- **Visual review was never the bottleneck.** TEA's design decisions closed *fast*: icon direction picked from a rendered 3-option sheet in one exchange; the V1–V7 vision approved (and course-corrected, and re-approved) same-day — because designer.md's own rule ("every proposal shows the thing") was followed and the human looked at rendered artifacts directly. Note the mechanism honestly: the images traveled *outside* the channel files (sent to the human directly; channels carried only paths). Text channels carry *pointers* to visual work fine; they can't carry the pixels, and they never needed to.
+- **The real constraint was the dependency chain.** Every proposal with a functional half entered Dev's queue and aged there: the V-layer data halves (triaged Aug 22) and the fixture mode (ratified Aug 22) were both still unbuilt when the project paused — so the Designer spent the back half of TEA voluntarily frozen out of components (correctly, per the mid-flight rule) with in-lane work exhausted. Designer throughput is a function of Dev bandwidth, structurally.
+
+Suggested sharpening of the activation criterion, replacing the channel-review claim: *activate Designer only when (a) the UI is genuinely a differentiator AND (b) you can budget the Dev capacity its proposals will generate — otherwise its backlog rots and the role idles by design, not by fault.* And when design folds into Dev, port the one rule that made review work: identity and direction calls go to the human as **2–3 rendered options, always** — that rule (already in the fold-into-Dev text) is the part of the Designer worth keeping mandatory.
