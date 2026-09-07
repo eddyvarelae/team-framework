@@ -1,4 +1,4 @@
-# Multi-Agent Framework
+# Team Framework
 
 Run a project with a small team of AI agent sessions (Planner, Dev, Tester + optional Designer/Cloud), coordinated by you, the human. All framework machinery lives in one folder: **`team/`**.
 

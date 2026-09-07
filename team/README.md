@@ -1,4 +1,4 @@
-# Multi-Agent Framework
+# Team Framework
 
 Run a project with **three AI agent sessions** - Planner, Dev, Tester - coordinated by **you, the human**. Agents never talk to each other: every cross-role message is a dated note in a repo file, and you carry it between sessions. Slower than direct contact, and worth it: every decision stays reconstructable from the files.
 
