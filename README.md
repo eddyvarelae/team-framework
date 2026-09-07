@@ -38,4 +38,6 @@ The 10-minute read is this file + `TEAM.md` + your actor file in `/actors/`.
 2. The Planner sets everything up and tells you when to boot the Dev; boot the Tester once there's something real to verify.
 3. Boot line for any actor: *"You are the {actor} for {project}. Read TEAM.md, /actors/{actor}.md, then your channel."*
 
-Design and infra have no dedicated actors: Dev executes both under the rules in its file (identity calls reach the human as 2-3 rendered options; infra follows the hard rules). If a project truly outgrows that, write the new actor file then - not before.
+## Optional actors
+
+**Designer** and **Cloud** have contracts in `/actors/` but start unbooted: Dev's own Design and Infra blocks cover their ground until a project earns them. Each optional file opens with its activation criteria (Designer: UI is a differentiator AND its proposals' Dev capacity is budgeted; Cloud: recurring infra work, multi-tenant credential risk, or ~the third infra incident in a month). Read their files only when activating them - they're not part of the 10-minute path.
