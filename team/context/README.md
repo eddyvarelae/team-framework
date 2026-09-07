@@ -41,6 +41,6 @@ context/
 
 When a learning emerges from working on a subject:
 - If it's specific to that subject → update `/specs/{subject}/`
-- If it's generalizable → update the relevant `/context/` file AND log an iteration
+- If it's generalizable → the Planner updates the relevant `team/context/` file, dated
 
-That iteration loop is what makes `/context/` get smarter over time without becoming a pile of one-off notes.
+That loop is what makes `team/context/` get smarter over time without becoming a pile of one-off notes.
