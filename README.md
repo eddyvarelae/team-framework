@@ -51,6 +51,16 @@ And always:
 
 - **The human** - final product decisions, credentials/auth, purchases, sign-offs, and message carrier. Can act directly in any channel (signed as themselves).
 
+## The human's own agent (chief of staff) - deliberately NOT an actor
+
+The human may run a standing personal agent that captures intent, holds cross-project context, drives the human's own tooling (email drafts, calendars, purchases, research), spawns ephemeral worker agents for its own tasks, and carries messages between project teams. This seat exists **per human, not per project**, and it is intentionally outside every team:
+
+- To a project team it appears only as (a) the **human's proxy** - notes signed `**Human (via {agent}) (YYYY-MM-DD):**`, carrying decisions that still get logged to `DECISIONS.md` - or (b) an **external agent** through the Tester's documented interface.
+- It never holds a team lane, never triages a backlog, never coordinates team agents directly - that would bypass the auditable bus that makes every decision reconstructable.
+- Its ephemeral sub-agents are its own delegates and report only to it; they are not team actors.
+
+Coordination therefore lives in three distinct places: **within a project** - the Planner; **between sessions** - the human (assisted by this agent as carrier); **across the human's whole portfolio** - this agent. Collapsing these into one "main agent" role inside a team is the design error this section exists to prevent. (Origin: TEA's "User" agent was simultaneously in-team tester and the human's chief of staff - it worked only because TEA's product WAS the coordination tool.)
+
 Each actor has an instruction file in `/actors/` - that file IS the actor's system contract. Start a new session, point it at its actor file, and it knows its lane.
 
 ---
