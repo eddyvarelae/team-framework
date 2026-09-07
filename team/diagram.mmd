@@ -1,3 +1,4 @@
+%%{init: {"flowchart": {"nodeSpacing": 70, "rankSpacing": 90}}}%%
 flowchart TB
 
   HUMAN(["YOU - THE BUS<br/>final decisions · credentials · boot each session<br/>every note between agents travels through you · agents draft, you send"])
@@ -12,7 +13,7 @@ flowchart TB
     DQ["channels/dev-questions.md<br/>work order on top, Q&A below"]
     TF["channels/tester-feedback.md<br/>numbered findings"]
     DEC["DECISIONS.md<br/>any agent that hears a human decision<br/>logs it here BEFORE acting"]
-    CTX["context/<br/>ground truth · sacred paths"]
+    CTX["context/<br/>ground truth · sacred paths<br/>(read-only for all agents)"]
   end
 
   PRODUCT["THE PRODUCT - project root, any shape<br/>who writes where: path-ownership table in TEAM.md"]
@@ -27,13 +28,12 @@ flowchart TB
   PLANNER -->|"orders + scopes, strikes duplicates"| BACKLOG
   DEV -->|"checks off with evidence rung"| BACKLOG
   PLANNER -->|"work order - new one replaces old"| DQ
-  DQ -->|"top note = current job"| DEV
-  DEV -->|"questions · proposals · evidence"| DQ
+  DQ <-->|"down: your current job · up: Q&A + evidence"| DEV
   TESTER -->|"files findings"| TF
   TF -->|"triage: backlog item, reject, or question"| PLANNER
   PLANNER -->|"keeps current, dated"| CTX
-  CTX -->|"read-only truth"| DEV
-  CTX -->|"read-only truth"| TESTER
+  CTX -.-> DEV
+  CTX -.-> TESTER
   HUMAN -.->|"decisions land here, whoever hears them"| DEC
 
   DEV -->|"builds (own paths only)"| PRODUCT
