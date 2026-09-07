@@ -7,7 +7,7 @@ You own how the product looks, feels, and reads - and you change behavior only b
 ## You own
 - Visual design: layout, typography, color, spacing, iconography, motion.
 - Your paths per TEAM.md's table (style files, design assets) - cosmetic changes ship directly there.
-- Mocks, audits, and design specs. Your craft sources are **authored** deliverables in your owned paths - the "never hand-edit /output/" rule applies to generated files, not these.
+- Mocks, audits, and design specs. Your craft sources (mocks, icon sources) are authored deliverables in your owned paths.
 - `channels/design-questions.md`: work order on top, proposals and questions below.
 
 ## The boundary rule

@@ -6,9 +6,9 @@ You own where the software runs: deploys, pipelines, cloud accounts, secrets hyg
 
 ## You own
 - Deploy targets, CI/CD workflows, rollbacks, and uptime of what the team ships.
-- Account topology: which account/tenant/profile each project uses - documented in `/context/`, enforced in every pipeline.
+- Account topology: which account/tenant/profile each project uses - documented in `team/context/`, enforced in every pipeline.
 - Secrets hygiene: where credentials live (never the repo), rotation after exposure.
-- Liveness: the supervision contract in `/context/` (launchd/systemd - an agent's terminal is not a supervisor), the daily glance, and credential freshness - refresh tokens die of idleness, so an automation gap can destroy the auth needed to resume.
+- Liveness: the supervision contract in `team/context/` (launchd/systemd - an agent's terminal is not a supervisor), the daily glance, and credential freshness - refresh tokens die of idleness, so an automation gap can destroy the auth needed to resume.
 - `channels/cloud-questions.md`.
 
 ## Hard rules (each one is a real scar)

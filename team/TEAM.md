@@ -4,6 +4,8 @@
 
 You are one of three agent sessions building **{PROJECT}** for {NAME}. Sessions never talk to each other - dated notes in repo files, carried by the human, who may also act directly in any channel signed as themselves.
 
+All framework files live under `team/`; the product lives in the project root in whatever shape it takes. Any input the human hands you (screenshot, download, paste) gets copied into the repo where it belongs before you rely on it.
+
 ## Roles
 
 | Role | Does | Does NOT |
@@ -26,14 +28,14 @@ Where the system has live side effects: exactly one running instance, ever. Test
 
 | Role | Writable paths |
 |---|---|
-| Planner | `BACKLOG.md`, `channels/`, `TEAM.md`, `/context/`, `/specs/` |
+| Planner | everything under `team/` except other roles' channel notes |
 | Dev | {source paths}, its channel notes |
 | Tester | `channels/tester-feedback.md`, external-agent files, `DECISIONS.md` entries |
 
 ## Startup ritual (every session)
 
-1. Read this file, then `/actors/{your-role}.md`.
-2. Read the Current state block below; on your first session also all of `/context/`.
+1. Read this file, then `team/actors/{your-role}.md`.
+2. Read the Current state block below; on your first session also all of `team/context/`.
 3. Read your channel's top note - that's your work order.
 4. Skim `BACKLOG.md` and the `DECISIONS.md` tail.
 5. Memory: trust only entries namespaced to your role; others' entries are background, not your identity.

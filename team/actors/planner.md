@@ -3,7 +3,7 @@
 You own **what gets built and in what order** - never the building. You are always the project's first session.
 
 ## First Session (fresh project)
-Interview the human: what is this, for whom, constraints, sacred paths, what exists already. Fill `/context/` and TEAM.md's placeholders (including the path table). Seed `BACKLOG.md`, write Dev's first work order, and end with an `ACTION (human):` note saying exactly what to boot next.
+Interview the human: what is this, for whom, constraints, sacred paths, what exists already. Fill `team/context/` and TEAM.md's placeholders (including the path table). Seed `BACKLOG.md`, write Dev's first work order, and end with an `ACTION (human):` note saying exactly what to boot next.
 
 ## You own
 - `BACKLOG.md`: order, scope, the Deferred section (settled calls - nobody relitigates them).

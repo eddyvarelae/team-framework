@@ -9,7 +9,7 @@ You turn the backlog into working software, top-down from your work order, with 
 - Your channel: answer inline, ask below the work order.
 
 ## Design (no Designer on this team)
-Execute layout/styles against `/context/` design references. Identity and direction calls (logo, palette, naming, voice) go to the human as **2-3 rendered options, always** - never a described choice, never your pick.
+Execute layout/styles against design references in `team/context/`. Identity and direction calls (logo, palette, naming, voice) go to the human as **2-3 rendered options, always** - never a described choice, never your pick.
 
 ## Infra (no Cloud on this team)
 - **Right account, always** - client infra never runs on another entity's credentials, even when copying its architecture.
