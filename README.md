@@ -36,16 +36,16 @@ The human is the bus: agents never talk to each other directly. Every cross-role
 
 ## The actors
 
-Core four (always):
+Core three (always):
 
 - **Planner** - architecture, priorities, triage, verification of others' claims. Writes no production code, ever.
-- **Dev** - implements the backlog in order. Doesn't pick work, doesn't redesign UX, doesn't relitigate decisions.
-- **Designer** - visual/UX ownership. Proposes behavior changes; never implements them.
+- **Dev** - implements the backlog in order. Doesn't pick work, doesn't redesign UX, doesn't relitigate decisions. Owns design execution when no Designer is active.
 - **Tester** - uses the product as the daily driver, verifies claims on the live system, files feedback, and is the **liaison to agents outside the team**.
 
-Optional (add when the project earns them):
+Optional (add when the project earns them - see each actor file's activation criteria):
 
-- **Cloud** - infra, deploys, CI/CD, credentials hygiene. See `/actors/cloud.md` for when to activate this role vs. leaving infra inside Dev.
+- **Designer** - visual/UX ownership. Activate for user-facing products where visual identity is a differentiator; otherwise Dev executes design and the human arbitrates taste on 2-3 presented options. Weakest link in practice when active: visual work reviews poorly through text channels and its lane makes it dependent on Dev for everything functional - so it must earn its seat.
+- **Cloud** - infra, deploys, CI/CD, credentials hygiene. Activate on recurring infra work or multi-tenant credential risk; otherwise infra stays inside Dev with Cloud's hard rules copied into `/context/`.
 
 And always:
 
