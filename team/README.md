@@ -41,4 +41,4 @@ The human's inputs arrive however they arrive - screenshots (often in a cloud fo
 
 ## Optional actors
 
-**Designer** and **Cloud** have contracts in `actors/` but start unbooted: Dev's own Design and Infra blocks cover their ground until a project earns them. Each optional file opens with its activation criteria (Designer: UI is a differentiator AND its proposals' Dev capacity is budgeted; Cloud: recurring infra work, multi-tenant credential risk, or ~the third infra incident in a month). Read their files only when activating them - they're not part of the 10-minute path.
+**Designer** and **Cloud** have contracts in `actors/` but start unbooted: Dev's own Design and Infra blocks cover their ground until a project earns them. Each optional file opens with its activation criteria (Designer: UI is a differentiator AND its proposals' Dev capacity is budgeted; Cloud: recurring infra work, multi-tenant credential risk, or infra incidents repeatedly interrupting Dev). Read their files only when activating them - they're not part of the 10-minute path.
