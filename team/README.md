@@ -2,7 +2,7 @@
 
 Run a project with **three AI agent sessions** - Planner, Dev, Tester - coordinated by **you, the human**. Agents never talk to each other: every cross-role message is a dated note in a repo file, and you carry it between sessions. Slower than direct contact, and worth it: every decision stays reconstructable from the files.
 
-This file addresses you, the human operator. Agents enter through `TEAM.md` - its startup ritual sends each one to its own contract in `actors/`.
+This file addresses you, the human operator. The interaction map is in `diagram.png` - one picture, whole protocol. Agents enter through `TEAM.md` - its startup ritual sends each one to its own contract in `actors/`.
 
 ## Where things live
 
