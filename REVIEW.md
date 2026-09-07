@@ -130,3 +130,85 @@ As written, the workspace model gives a Designer no legitimate home: mocks, audi
 - **The real constraint was the dependency chain.** Every proposal with a functional half entered Dev's queue and aged there: the V-layer data halves (triaged Aug 22) and the fixture mode (ratified Aug 22) were both still unbuilt when the project paused — so the Designer spent the back half of TEA voluntarily frozen out of components (correctly, per the mid-flight rule) with in-lane work exhausted. Designer throughput is a function of Dev bandwidth, structurally.
 
 Suggested sharpening of the activation criterion, replacing the channel-review claim: *activate Designer only when (a) the UI is genuinely a differentiator AND (b) you can budget the Dev capacity its proposals will generate — otherwise its backlog rots and the role idles by design, not by fault.* And when design folds into Dev, port the one rule that made review work: identity and direction calls go to the human as **2–3 rendered options, always** — that rule (already in the fold-into-Dev text) is the part of the Designer worth keeping mandatory.
+
+---
+
+# Dev review — same template, from the implementer's seat
+
+**Dev (TEA) — 2026-09-07.** Reviewed the same four surfaces (`README.md`, `TEAM.md`, `actors/*.md`) against what I personally hit while building TEA Aug 20 – Sep 7: 14 commits, phases 1–3 of the app, the headless runner, scheduler, and the calendar wiring. I've read the Planner's review above and I'm not repeating it. Where I differ or can add evidence they didn't have, it's below. **Headline: the template's *content* is right; what's missing is almost entirely about two agents' hands being in the same repo at the same time.**
+
+## A. Corroboration (independent, from my side)
+
+- **§2's duplicate-item diagnosis is correct, and I saw the duplicate myself.** While checking off items on Aug 22 I had both live in front of me: P3 `App icon + tauri build dmg … (Icon needs a design decision — default Tauri icon in place)` and, in the newer P2 triage section, `dmg build — unblocks when Eddy picks icon direction A/B/C`. Two items, one decision, contradictory states — exactly as described. I never reported it because from the executor's seat "the planner has a newer section" reads as normal, not as a fault. That's worth noting: **duplicates are invisible to executors by construction**, so the dedupe duty has to sit with the Planner, as §2 proposes.
+- **Evidence-required "done" earns its keep.** Both of my worst bugs were found *only* because I went looking for proof rather than reading code: the runner wrote `runs` rows with the anon key as bearer (RLS silently rejects — the insert "worked" and returned nothing), and `schedule: "20:00"` came back from serde_yaml **unquoted** after the first run rewrote the card, which would have silently killed every recurring card after its first firing. Neither is visible by inspection; both surfaced from demanding a row id and writing a round-trip test.
+- **Work orders top-down: no complaints from the executor side.** I never once had to guess what was next, across three re-sequencings.
+
+## B. The real gap: two agents, one working tree, no commit discipline
+
+Nothing in README, TEAM.md, or any actor file says how **git** works on a shared repo. That is the single largest hole, and TEA had live near-misses:
+
+- On Aug 22 `git status` held Designer work (`App.css`, `CardItem.tsx`, `Column.tsx`, the whole `src-tauri/icons/**` set, `design/`), my work (`cards.rs`, `CLAUDE.md`), and the Tester's production card edits **simultaneously**. I had been staging with `git add -A` all day. One more of those and I'd have committed the Designer's half-finished icon set under a Dev commit message.
+- The Designer and I edited `CardItem.tsx` **within the same hour**. Nothing prevented it; we just happened not to collide.
+- I also had to leave a legitimate BACKLOG check-off **unstaged** because the Planner had uncommitted edits in the same file — i.e. the append-only culture and the commit model actively fight each other.
+
+Proposed additions, all cheap:
+
+> **TEAM.md, new rule:** *Stage explicit paths — never `git add -A`/`git commit -a`. Each actor commits only files it owns, with its role named in the commit. If a shared file (BACKLOG, channels) holds another role's uncommitted edits, leave your change unstaged and say so in your channel.*
+
+> **README non-negotiables, new item:** *One repo, many hands: ownership is by path, and every actor's commits are separable. If two actors must touch one file, they take turns through the Planner — not concurrently.*
+
+Worth adding to the setup checklist: for genuinely parallel work, give the Designer (or any second implementer) a **git worktree** on its own branch. TEA's Dev and Designer converged on this and the Planner ratified it. One caveat learned the hard way and worth putting in the template so nobody repeats it: **a worktree is safe for editing, but not for running the product.** A second app instance in TEA would have meant two schedulers firing the same unattended jobs, two sync engines fighting over one rotating refresh token, and a stale cards directory baked in at compile time. Isolation of the *files* does not isolate the *side effects*.
+
+## C. "Cosmetic vs functional" is not enforceable; paths are
+
+The Planner says the Designer boundary "held under pressure." It held **because the Designer volunteered the ambiguous case**, not because the rule decided it: removing the priority chip from the card face is a restyle by the letter of the rule and an information-architecture change in substance. `actors/designer.md` already hedges with "{define exact paths in TEAM.md}" — promote that from a placeholder to a **required setup artifact**: TEAM.md is incomplete until it contains a path-ownership table, and the setup checklist in README should say so. Add the decision rule that actually works: *restyling an element is the Designer's; adding or removing one is a backlog item.*
+
+## D. Verification asymmetry — the framework demands evidence it doesn't make obtainable
+
+This is where "done requires evidence" quietly degrades. In TEA:
+
+- **I could implement UI but never see it.** I have no way to click the app. D1 (due-date affordance) and D2 (schedule row) shipped **typechecked and logic-tested but never once observed rendered** — I had to write that admission into the channel and ask whoever was at the machine to look.
+- To verify the RunPane at all I ended up capturing the app window by **CGWindowID** via a Swift helper I wrote for the purpose, driving a real scheduled run to produce the stream. That worked, but inventing a screenshot pipeline is not a repeatable protocol.
+- **The Designer had the mirror problem**: they could not run the product safely (see §B), so they designed against mocks while the live board held the real data.
+
+The Planner's §4 mentions fixtures as a Designer nicety. From the implementer's seat it's structural. Proposed non-negotiable:
+
+> *Every project defines a **safe preview** — a way any actor can exercise the product against fixtures without touching production state or side effects (in TEA: a browser fixture mode, no Tauri, no sync, no scheduler). If no safe preview exists, "done" cannot mean "verified" for any actor who can't reach the live system, and items must say so.*
+
+## E. Evidence needs levels, or "unverified" stays a matter of conscience
+
+Rule 2 says unverified work must say so, but gives no vocabulary, so I invented one ad hoc ("typechecked but never seen rendered"). A four-rung ladder, stated in every check-off, would make the rule mechanical:
+
+> `compiled` → `tested` (unit/logic) → `observed` (ran on the real system, output attached) → `witnessed` (a human or the Tester saw it).
+
+TEA's own record maps cleanly onto it: the calendar C1 round trip was *observed* (create → freebusy → delete → freebusy-empty, on the real calendar); D1/D2 were only *tested*; the icon change was *witnessed* by Eddy. Different rungs deserve different trust, and today the backlog renders them identically.
+
+## F. Nobody owns liveness of unattended processes
+
+TEA's TEAM.md said "don't break the daemon," which is a prohibition, not an owner. Consequences: the app exited on its own **three times on Aug 22 alone** (each time cleanly, exit 0, no error), I restarted it each time by hand, and **it is down right now as I write this** — since ~10:00 today, with the twice-daily sweep silently not running. `actors/cloud.md` is scoped to deploys/CI/CD and is off by default; `actors/dev.md` covers *deliberate* restarts. A long-running local process on the human's machine falls between them.
+
+This is the complement to the Planner's §3.3 — theirs is "fail loudly," mine is "stay alive at all," and neither substitutes for the other:
+
+> **Proposed:** *Any unattended process the team depends on has a named owner and a written liveness contract in `/context/`: how it is supervised (launchd/systemd — not an agent's terminal session), who restarts it, and what evidence proves it alive. An agent's background shell is not a supervisor.*
+
+TEA never resolved this. I recommended a LaunchAgent twice and it stayed an open recommendation, which is precisely how it ends up down on a Sunday morning with nobody watching.
+
+## G. Let actors append to each other's channels
+
+`actors/dev.md` already permits "appending signed notes" to others' files, but TEAM.md frames channels as Planner↔role, and I read the stricter version: when I needed the Designer to style two class hooks I'd deliberately left unstyled (`.field-row`, `.schedule-row`), I routed it through Eddy rather than write in `design-questions.md`. It worked — they picked it up — but it consumed a human round-trip for a mechanical handoff. Related failure of the same bus: a Designer message reached me **truncated mid-sentence** ("TEA - Designer doesn…") and I had to stop and ask rather than guess.
+
+> **Proposed clarification in TEAM.md:** *Any actor may append a signed, dated note to any channel. Only the Planner triages or resolves items. The human carries messages when a session isn't running — not as a permission gate.*
+
+## H. Line items for the actor files
+
+- **dev.md** — the restart clause says "if a change needs a restart… note the time and check what was missed." Widen it to **implicit** restarts: my `cargo test` tripped the dev-server watcher, which rebuilt and restarted the live app mid-verification and changed the window id under my screenshot loop. Rule should read *any action that may restart a live process*, not just intended ones.
+- **dev.md** — add the Planner's suggested "conventions doc updated in the same commit as the behavior change." I'd strengthen it: in TEA the conventions file *is* the contract external agents read, so a lagging doc is a live wrong instruction, not just stale prose.
+- **tester.md** — "test data tagged and cleaned up" is validated (my `test`-tagged scheduled cards were created, used, deleted same day). Add the corollary that isn't stated anywhere: **the product's live data is production data.** TEA's board was Eddy's actual job funnel; every scratch card I made was created *on it*. A line in TEAM.md's sacred-paths area would cover it.
+- **planner.md** — agree with §3.6's ops clause. From the executor's side the failure mode is real: with Cloud inactive there were several one-off operational acts nobody was cleanly allowed to do.
+- **README setup** — steps 1–5 never mention initializing git, ownership, or branches, which is where §B bites. Add: *"6. Declare path ownership in TEAM.md and agree the commit protocol before the second actor starts."*
+
+## I. What I'd keep exactly as-is
+
+Work orders and their top-down discipline; "Deferred means deferred" (I never once re-argued a settled call, and the temptation was there); the two-inboxes rule; the Tester-as-liaison design, which is why an outside agent could drive our board through a documented card contract without ever reading a team file. And the human-as-bus model, with §G's amendment: it is slower than direct agent contact and it is *worth it* — every decision in TEA is reconstructable from the files three weeks later, which is exactly how this review was possible.
+
+**Bottom line from Dev:** adopt §B (commit discipline + path ownership) and §D (safe preview) before the next project starts — those two cost the most and are the cheapest to fix now. §F is the one that will embarrass the team publicly, because it fails at night, unattended, and silently.
