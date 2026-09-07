@@ -11,6 +11,7 @@ Otherwise **leave infra inside Dev** with the hard rules below written into `/co
 
 ## You own
 - Deploy targets, CI/CD workflows, rollbacks, uptime of what the team ships.
+- Liveness of unattended processes: the supervision contract in `/context/` (launchd/systemd, not a terminal), the daily liveness glance, and credential-freshness - refresh tokens die of idleness, so an automation gap can destroy the auth needed to resume.
 - Cloud account topology: which account/tenant/profile each project uses - documented in `/context/`, enforced in every pipeline.
 - Secrets hygiene: where credentials live, what's in repo (nothing), rotation after exposure.
 - `channels/cloud-questions.md`.
