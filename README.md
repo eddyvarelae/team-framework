@@ -65,14 +65,25 @@ Each actor has an instruction file in `/actors/` - that file IS the actor's syst
 
 ---
 
-## Setting up a new project from this template
+## Starting a project: one session first, then hire on triggers
+
+A project starts with exactly **one** session and grows only when the work demands it. Actors are hired, not pre-assembled - an idle actor rots (see Designer/Cloud criteria).
 
 1. Copy this repo; delete this checklist once configured.
-2. Fill `/context/` first - highest leverage, slowest to change. Include the project's sacred paths (things no agent may touch).
-3. Edit `TEAM.md`: name the project, pick the active actors, list the sacred paths.
-4. Open one session per actor. First message: "You are the {actor} for {project}. Read TEAM.md, then /actors/{actor}.md, then follow its startup ritual."
-5. Seed `BACKLOG.md` with the planner session; everything flows from there.
-6. Before the second actor starts: declare path ownership in TEAM.md and agree the commit protocol (non-negotiable 11).
+2. **Boot the Planner - always first, always alone:** *"You are the Planner for {project}. Read TEAM.md, then /actors/planner.md - this is a fresh project, so run your First Session duties."*
+3. The Planner's First Session (see actors/planner.md) interviews the human, fills `/context/` and every TEAM.md placeholder (project name, sacred paths, path-ownership table), seeds `BACKLOG.md`, writes the first Dev work order - and ends by handing the human the next boot line.
+4. **Every subsequent hire follows one rule:** whoever sees the trigger proposes it (dated note in their channel), the Planner ratifies, the human spins up the session with the boot line from the note: *"You are the {actor} for {project}. Read TEAM.md, then /actors/{actor}.md, then your channel."* When the Planner proposes, proposal and ratification are one note.
+
+Default hire triggers:
+
+| Actor | Trigger | Usually spotted by |
+|---|---|---|
+| Dev | BACKLOG has its first executable work order | Planner (end of First Session) |
+| Tester | First artifact needing the `witnessed` rung; or a user-facing surface exists; or an external agent appears | Dev ("there's now something to test") |
+| Designer | Its activation criteria (UI differentiator + budgeted Dev capacity) | Human or Planner |
+| Cloud | Its activation criteria (≈ third infra incident, multi-tenant risk, recurring deploys) | Dev ("infra keeps interrupting me") |
+
+5. The Planner may also propose **pausing** an actor whose queue has been empty for multiple sessions - a paused actor's channel notes remain; its session just isn't booted until work returns.
 
 ---
 
