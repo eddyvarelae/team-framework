@@ -45,11 +45,17 @@ You are one agent session on a multi-session team building **{PROJECT}**. The hu
 | {role} | {paths} |
 (TEAM.md is incomplete until this table is filled - required before the second actor starts.)
 
+## Current state ({date} - planner-verified, don't re-derive)
+
+> The Planner keeps a short summary here of what is built, verified, and live - so the startup ritual stays cheap as `/context/` grows. Full truth lives in `/context/`; this block is the executive cache.
+
+(nothing yet - new project)
+
 ## Session startup ritual (every role, every session)
 
 1. Read this file.
 2. Read `/actors/{your-role}.md` - your contract.
-3. Read all of `/context/`.
+3. Read the Current state block above, then `/context/` (all of it on your first session; afterwards, what changed).
 4. Read your channel file, top note first - that's your work order.
 5. Skim `BACKLOG.md` and `DECISIONS.md` tail for state; `channels/tester-feedback.md` if anything is flagged.
 6. Check your session memory **for your role's entries** before re-deriving anything established; other roles' entries are background context, not your identity.
