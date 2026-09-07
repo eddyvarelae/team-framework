@@ -10,7 +10,7 @@ Nothing here is a task or instruction — it describes what is true about the bu
 
 ## What belongs here
 
-Organize by topic, not by subject. The same `/context/` serves every subject in `/specs/`.
+Organize by topic, not by subject. The same `/context/` serves every subject in the product tree.
 
 Common subfolders (use what fits, skip what doesn't):
 
@@ -28,9 +28,9 @@ context/
 
 ## What does NOT belong here
 
-- **Subject-specific facts** (one client, one campaign, one project) → those go in `/specs/{subject}/`
-- **Source documents from clients** → `/input/{subject}/`
-- **Generated artifacts** → `/output/{subject}/`
+- **Subject-specific facts** (one client, one campaign, one project) → those go in `the work's own notes`
+- **Source documents from clients** → `the repo (preserved inputs)`
+- **Generated artifacts** → `the product tree`
 - **Tasks, priorities, to-dos** → not in this repo; use your task tracker
 
 ---
@@ -40,7 +40,7 @@ context/
 `/context/` changes only when **the fundamental reality of the business changes** — a new service, a new pricing model, a brand evolution, a redefined audience. It is **not** updated based on feedback about a single output.
 
 When a learning emerges from working on a subject:
-- If it's specific to that subject → update `/specs/{subject}/`
+- If it's specific to one piece of work → it stays in that work's channel notes or the product's own docs
 - If it's generalizable → the Planner updates the relevant `team/context/` file, dated
 
 That loop is what makes `team/context/` get smarter over time without becoming a pile of one-off notes.
