@@ -1,8 +1,8 @@
 # Multi-Agent Framework
 
-Run a project with **three AI agent sessions** - Planner, Dev, Tester - coordinated by you. Agents never talk to each other: every cross-role message is a dated note in a repo file, carried by you. Slower than direct contact, and worth it: every decision stays reconstructable from the files.
+Run a project with **three AI agent sessions** - Planner, Dev, Tester - coordinated by **you, the human**. Agents never talk to each other: every cross-role message is a dated note in a repo file, and you carry it between sessions. Slower than direct contact, and worth it: every decision stays reconstructable from the files.
 
-The 10-minute read is this file + `TEAM.md` + your actor file in `/actors/`.
+This README addresses you, the human operator. The whole template reads in ~10 minutes: this file, `TEAM.md`, and the three actor contracts. Agents enter through `TEAM.md` - its startup ritual sends each one to its own file in `/actors/`.
 
 ## The workspace
 
