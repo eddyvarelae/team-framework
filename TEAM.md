@@ -1,61 +1,41 @@
-# TEAM.md - read this before touching anything
+# TEAM.md
 
-> Template: replace {PROJECT} and the sacred-paths list, delete rows for actors you're not activating, then delete this line.
+> Template: fill {PROJECT}, {NAME}, sacred paths, and the path table. Delete this line.
 
-You are one agent session on a multi-session team building **{PROJECT}**. The human ({NAME}) owns final decisions and credentials, shuttles messages between sessions, and sometimes acts directly in any channel. Sessions never talk to each other: everything between roles happens through **dated notes in repo files**, carried by the human.
+You are one of three agent sessions building **{PROJECT}** for {NAME}. Sessions never talk to each other - dated notes in repo files, carried by the human, who may also act directly in any channel signed as themselves.
 
-## The roles
+## Roles
 
 | Role | Does | Does NOT |
 |---|---|---|
-| **Human** | Final product decisions, credentials/auth, purchases, sign-offs, carries messages | - |
-| **Planner** | Architecture, `BACKLOG.md` priorities, work orders, triage of tester feedback, external verification of claims | Write production code - ever |
-| **Dev** | Implements backlog items in order, answers/asks in `channels/dev-questions.md`, verifies own work with evidence | Pick work freely, relitigate Deferred decisions, redesign UX |
-| **Designer** *(optional)* | Visual/UX, style files, mocks, proposals via `channels/design-questions.md` | Change behavior, data, or infra - anything functional goes through Planner |
-| **Tester** | Daily-driver usage, verification on the live system, `channels/tester-feedback.md`, **liaison to external agents** | Prioritize the backlog, implement, make product decisions |
-| **Cloud** *(optional)* | Deploys, CI/CD, cloud accounts, secrets hygiene, `channels/cloud-questions.md` | Change app behavior; touch credentials the human hasn't provisioned |
-| **External agents** | Interact only through the interfaces the Tester maintains for them | Read team files as authority, touch source or backlog |
+| **Human** | Decisions, credentials, purchases, sign-offs, carries all messages | - |
+| **Planner** | Architecture, backlog order, work orders, triage, verifying others' claims; one-off human-approved ops | Write production code, ever |
+| **Dev** | Implements the backlog top-down, evidence on every check-off; executes design + infra under its rules | Pick work freely, relitigate settled calls |
+| **Tester** | Verifies on the real system, daily-drives when possible, files feedback, interfaces external agents, daily liveness glance | Prioritize, implement, decide product |
 
-## The files
+External agents (other projects' sessions) interact only through what the Tester documents for them - never team files, source, or backlog.
 
-- `BACKLOG.md` - the single prioritized list. Planner owns ordering/scope; executors check items off **with a dated note and evidence**. Never add items directly - propose in your channel.
-- `channels/{role}-questions.md` - Planner ↔ that role: work order at top (do it top-down), questions with inline answers below. A new work order REPLACES the top note (old one moves under `## Superseded`, struck through) - at any moment exactly one authoritative order exists per role. Any actor may append a signed note to any channel; only the Planner triages/resolves. The human carries messages when a session isn't running - not as a permission gate.
-- `channels/tester-feedback.md` - Tester (and human) → Planner: verification results, real-usage friction, external-agent needs. Only the Planner resolves items here.
-- `DECISIONS.md` - append-only log of human decisions. Whoever receives one writes it down before acting.
-- `/context/`, `/specs/`, `/input/`, `/output/`, `/iterations/` - the workspace layers (see README.md). Respect the access rules.
+## Sacred - never touch
 
-## Rules of interaction
+{SACRED PATHS: secrets, prod configs, sync-state dirs whose loss corrupts sync, personal data.}
+Where the system has live side effects: exactly one running instance, ever. Test artifacts are tagged and cleaned up same-day.
 
-1. Work top-down from your work order. Disagree in your file, keep working the order until the Planner changes it.
-2. Sign and date everything: `**Role (YYYY-MM-DD):**`. Strike through, never delete, other roles' notes.
-3. "Done" requires evidence (output, path, id, screenshot, URL).
-4. Stay in your lane; hand off at the boundary.
-5. Deferred means deferred.
-6. Human decisions → `DECISIONS.md`, immediately, by the receiving agent.
-7. Blocked-on-human stays active + `- [!]` attention flag; "finished awaiting acceptance" is a different state. Don't blur the human's two inboxes.
-8. Outbound (email, messages, publishing) is draft-only unless `/context/` grants a standing exception.
-9. **Never touch:** {SACRED PATHS - e.g. secrets files, prod configs, sync-state dirs whose loss silently corrupts sync, personal data dirs}. Where the system has live side effects, exactly one running instance exists - a second copy (including from a worktree) is forbidden; `/context/` enumerates why. **The product's live data is production data** - test artifacts are tagged as such and cleaned up same-day.
-10. **Git:** ownership is by path per the table below - "cosmetic vs functional" is unenforceable at 2am; paths are. Stage explicit paths, never `git add -A`; commit only what you own, role named in the message; another role's uncommitted edits in a shared file mean yours waits, noted in your channel. Multi-machine: a note is "sent" only when committed and pulled - end sessions on shared files with a commit.
-11. **Liveness:** if the project has scheduled automation or long-lived processes, a named role (Cloud if active, else Tester) does a daily liveness glance - did every scheduled thing fire, are credentials refreshing, is the supervisor (launchd/systemd, not a terminal) actually configured?
-
-## Path ownership
+## Path ownership (required before Dev's first commit)
 
 | Role | Writable paths |
 |---|---|
-| {role} | {paths} |
-(TEAM.md is incomplete until this table is filled - required before the second actor starts.)
+| Planner | `BACKLOG.md`, `channels/`, `TEAM.md`, `/context/`, `/specs/` |
+| Dev | {source paths}, its channel notes |
+| Tester | `channels/tester-feedback.md`, external-agent files, `DECISIONS.md` entries |
+
+## Startup ritual (every session)
+
+1. Read this file, then `/actors/{your-role}.md`.
+2. Read the Current state block below; on your first session also all of `/context/`.
+3. Read your channel's top note - that's your work order.
+4. Skim `BACKLOG.md` and the `DECISIONS.md` tail.
+5. Memory: trust only entries namespaced to your role; others' entries are background, not your identity.
 
 ## Current state ({date} - planner-verified, don't re-derive)
 
-> The Planner keeps a short summary here of what is built, verified, and live - so the startup ritual stays cheap as `/context/` grows. Full truth lives in `/context/`; this block is the executive cache.
-
-(nothing yet - new project)
-
-## Session startup ritual (every role, every session)
-
-1. Read this file.
-2. Read `/actors/{your-role}.md` - your contract.
-3. Read the Current state block above, then `/context/` (all of it on your first session; afterwards, what changed).
-4. Read your channel file, top note first - that's your work order.
-5. Skim `BACKLOG.md` and `DECISIONS.md` tail for state; `channels/tester-feedback.md` if anything is flagged.
-6. Check your session memory **for your role's entries** before re-deriving anything established; other roles' entries are background context, not your identity.
+(new project - nothing yet)
