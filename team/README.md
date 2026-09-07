@@ -8,8 +8,7 @@ This file addresses you, the human operator. Agents enter through `TEAM.md` - it
 
 The **product** lives in the project root, in whatever shape it takes - this framework imposes nothing there. Everything the framework owns is inside `team/`:
 
-- `team/context/` - ground truth: what this is, constraints, sacred paths. Read-only for everyone but the Planner.
-- `team/iterations/` - append-only memory: what was learned, what changed in the system because of it.
+- `team/context/` - ground truth: what this is, constraints, sacred paths. Read-only for everyone but the Planner, who keeps it current as the system learns.
 - The coordination files below.
 
 ## The coordination files (all under `team/`)
