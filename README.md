@@ -1,9 +1,9 @@
 # Team Framework
 
-Run a project with a small team of AI agent sessions (Planner, Dev, Tester + optional Designer/Cloud), coordinated by you, the human. All framework machinery lives in one folder: **`team/`**.
+Run a project with a small team of AI agent sessions - PM (the driver, Fable-class), Dev seats (Opus-class), Tester, an external non-Claude Reviewer (Codex or equivalent), plus optional Designer/Cloud. The PM drives the loop; you make the decisions. All framework machinery lives in one folder: **`team/`**.
 
-To use: copy `team/` into your project's root, then boot the Planner:
+To use: copy `team/` into your project's root, then boot the PM on a Fable-class model:
 
-> "You are the Planner for {project}. Read team/TEAM.md and team/actors/planner.md - fresh project, run your First Session."
+> "You are the PM for {project}. Read team/TEAM.md and team/actors/pm.md - fresh project, run your First Session."
 
-Everything else: `team/README.md` (~10-minute read: it + TEAM.md + the three core actor contracts).
+Everything else: `team/README.md` (~10-minute read: it + TEAM.md + the core actor contracts).

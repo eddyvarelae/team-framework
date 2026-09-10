@@ -41,6 +41,6 @@ context/
 
 When a learning emerges from working on a subject:
 - If it's specific to one piece of work → it stays in that work's channel notes or the product's own docs
-- If it's generalizable → the Planner updates the relevant `team/context/` file, dated
+- If it's generalizable → the PM updates the relevant `team/context/` file, dated
 
 That loop is what makes `team/context/` get smarter over time without becoming a pile of one-off notes.

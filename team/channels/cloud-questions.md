@@ -1,6 +1,6 @@
-# cloud-questions.md - Planner <-> Cloud
+# cloud-questions.md - PM <-> Cloud
 
-Protocol: the Planner's current WORK ORDER lives at the top (newest REPLACES the old, which moves under ## Superseded). Questions and answers below, inline, dated and signed: **Role (YYYY-MM-DD):**.
+Protocol: the PM's current WORK ORDER lives at the top (newest REPLACES the old, which moves under ## Superseded). Questions and answers below, inline, dated and signed: **Role (YYYY-MM-DD):**.
 
 ## WORK ORDER
 
