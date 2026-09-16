@@ -38,6 +38,8 @@ Where the system has live side effects: exactly one running instance, ever - enf
 
 ## Seat transports (how the PM runs the team)
 
+**Every seat boots with Remote Control activated** so the human can reach and steer any seat from another machine, not only from the terminal that spawned it. Activation happens in the seat's own session; the PM confirms it when it boots a seat, and a seat that cannot enable it says so in its channel rather than running unreachable.
+
 Every seat writes to channel files regardless of how it runs - the record's visibility never depends on the window's. Defaults:
 - **Long-lived seats (Dev, Tester): visible terminal windows.** The PM opens them (e.g. `osascript` → Terminal running `claude "<boot line>"`) or hands the human the one-line boot. The human can watch and type into any seat at any time.
 - **Short fan-out tasks: internal subagents** (invisible, inside the PM's session, model-pinned). Fine for reads, checks, and drafts - never for deploys or anything reaching outside surfaces, which must run in a visible, file-writing seat.

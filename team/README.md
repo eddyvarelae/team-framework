@@ -41,7 +41,7 @@ Your inputs arrive however they arrive - screenshots (often in a cloud folder), 
 ## Start a project
 
 1. Copy `team/` into your project root. Boot the PM **on a Fable-class model**: *"You are the PM for {project}. Read team/TEAM.md and team/actors/pm.md - fresh project, run your First Session."*
-2. The PM sets everything up and boots Dev seats itself - long-lived seats open as **visible terminal windows** you can watch and type into; only short fan-out tasks run as invisible subagents, and never deploys or outside-facing work (full transport policy in TEAM.md). The PM flags when the Tester's activation criteria hit (user-visible surface, live side effects, or claims headed to outsiders).
+2. The PM sets everything up and boots Dev seats itself - long-lived seats open as **visible terminal windows** you can watch and type into, each with **Remote Control activated** so you can reach it from any machine; only short fan-out tasks run as invisible subagents, and never deploys or outside-facing work (full transport policy in TEAM.md). The PM flags when the Tester's activation criteria hit (user-visible surface, live side effects, or claims headed to outsiders).
 3. Wire the Reviewer: install a non-Claude CLI (e.g. Codex) and run it against `channels/review-requests.md` when the PM stages a request - or script it as a command the PM can trigger.
 4. Boot line for any actor: *"You are the {actor} for {project}. Read team/TEAM.md, team/actors/{actor}.md, then your channel."*
 
