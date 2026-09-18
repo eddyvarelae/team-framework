@@ -43,7 +43,22 @@ Where the system has live side effects: exactly one running instance, ever - enf
 Every seat writes to channel files regardless of how it runs - the record's visibility never depends on the window's. Defaults:
 - **Long-lived seats (Dev, Tester): visible terminal windows.** The PM opens them (e.g. `osascript` → Terminal running `claude "<boot line>"`) or hands the human the one-line boot. The human can watch and type into any seat at any time.
 - **Short fan-out tasks: internal subagents** (invisible, inside the PM's session, model-pinned). Fine for reads, checks, and drafts - never for deploys or anything reaching outside surfaces, which must run in a visible, file-writing seat.
-- **Reviewer: a command, not a chat.** The PM (or the human) triggers the non-Claude CLI against `review-requests.md`; the verdict lands signed in the file.
+- **Reviewer: a command, not a chat.** The PM (or the human) triggers the non-Claude CLI against `review-requests.md` (`codex exec … </dev/null` - invocation in `actors/reviewer.md`; the `</dev/null` is not optional); the verdict lands signed in the file.
+- **Seat-to-seat messages go session-to-session** where the tooling allows (Claude Code: `ListAgents` → `SendMessage` by session name), never by typing into another terminal. Idle notices fire immediately when the target is already idle - ask seats to message the PM directly when a step is done instead. A message is delivery, not agreement: the file is still the record.
+
+## Talking to the human (learned 2026-09-17)
+
+The human reads in bursts, hours apart, often from a phone. **Every PM message starts with the day, date and time** (`Thu 2026-09-17 18:12`, from `date "+%a %Y-%m-%d %H:%M"`) **and leads with what the human must do** - a short list, or "nothing". Then the narrative, one timestamped line per event. When an earlier ACTION becomes moot, the next message says so explicitly ("the patch is dead - nothing to confirm"). A dozen untimestamped updates are unreadable; the human should never have to ask "what happened with X?" about something the PM already resolved.
+
+## Machines that run things unattended (daemon-machine hygiene)
+
+Learned on a Mac Mini running a scheduled-runner app; generalize to any always-on box:
+- **One launcher.** A LaunchAgent *or* a login item - never both unless the app has a single-instance guard. Two launchers after a reboot = two schedulers.
+- **Launchers get a bare `PATH`.** Anything the app spawns (`claude`, `python`, `codex`) must be resolved to an absolute path in code or configured explicitly - never found via the inherited environment.
+- **OS auto-install of updates: off.** An aborted automatic restart quits the app and may never reboot; nothing relaunches it. Download automatically, install by hand.
+- **Every unattended run has a wall-clock timeout** and fails loudly (status, log, notification). A hung child must never park work as "in progress" forever.
+- **No build artifacts, `.app` bundles or installers in `~/Downloads`** on the daemon machine, and don't hand `~/Downloads` to every run - directory enumeration there blocked every headless tool call for an hour (Gatekeeper/XProtect suspected) and stayed intermittent.
+- **Restart protocol.** Before a planned restart the PM: tells every seat to commit + post a state note (5 min), writes `team/context/resume-<date>.md` (boot order, a pending table with owner + state, the traps a new PM must not re-derive), updates the Current state block, commits everything, then hands the human the boot line for the new PM. Seats don't survive a restart; files do.
 
 ## Path ownership (required before Dev's first commit)
 
