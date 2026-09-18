@@ -71,6 +71,7 @@ Learned on a Mac Mini running a scheduled-runner app; generalize to any always-o
 
 ## Startup ritual (every session)
 
+0. **Framework first (PM).** Fetch the framework repo this `team/` was copied from and compare: `git -C <framework checkout> fetch -q origin && git -C <framework checkout> log --oneline HEAD..origin/main`. Anything printed → pull, read the diff, apply the delta to this `team/` (framework-owned files are byte-copies; `TEAM.md` gets the hunks), commit that first. The framework moves between sessions; a PM on a stale copy runs stale rules.
 1. Read this file, then `team/actors/{your-role}.md`.
 2. Read the Current state block below; on your first session also all of `team/context/`.
 3. Read your channel's top note - that's your work order.
