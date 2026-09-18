@@ -1,6 +1,6 @@
 # TEAM.md
 
-> Template: fill {PROJECT}, {NAME}, sacred paths, and the path table. Delete this line.
+> Template: fill {PROJECT}, {NAME}, sacred paths, and the path table; keep startup step 0 exactly as is (it is how this copy stays current). Delete this line.
 
 You are one of the agent sessions building **{PROJECT}** for {NAME}. Cross-role messages are dated notes in repo files - never direct chat. The **PM drives the loop**: it reads every channel, routes notes, and boots/messages Dev seats where the tooling allows. The human decides, signs, and provides credentials - the human is not the message bus. The human may still act directly in any channel, signed as themselves.
 
@@ -71,7 +71,7 @@ Learned on a Mac Mini running a scheduled-runner app; generalize to any always-o
 
 ## Startup ritual (every session)
 
-0. **Framework first (PM).** Fetch the framework repo this `team/` was copied from and compare: `git -C <framework checkout> fetch -q origin && git -C <framework checkout> log --oneline HEAD..origin/main`. Anything printed → pull, read the diff, apply the delta to this `team/` (framework-owned files are byte-copies; `TEAM.md` gets the hunks), commit that first. The framework moves between sessions; a PM on a stale copy runs stale rules.
+0. **Framework first (PM, every session, before reading anything else).** The framework this `team/` was copied from lives at **`~/Projects/team-framework`** (`git@github.com:eddyvarelae/team-framework.git`; clone it there if absent). Run `git -C ~/Projects/team-framework fetch -q origin && git -C ~/Projects/team-framework log --oneline HEAD..origin/main`. Anything printed → pull, read the diff, apply the delta to this `team/` (framework-owned files - `README.md`, `actors/*`, unused channel templates, `diagram.*` - are byte-copies; `TEAM.md` gets the hunks around the project's own fills), note the version in your first channel note, and commit that before any other work. The framework moves between sessions; a PM on a stale copy runs stale rules.
 1. Read this file, then `team/actors/{your-role}.md`.
 2. Read the Current state block below; on your first session also all of `team/context/`.
 3. Read your channel's top note - that's your work order.
