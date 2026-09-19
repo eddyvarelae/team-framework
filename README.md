@@ -1,5 +1,6 @@
 # Team Framework
 
+*v2.4 (2026-09-19): quiet mode - after two unanswered PM messages, one-line timestamped events until the human replies; full summary on request.*
 *v2.3 (2026-09-17): the PM checks this repo for updates at every boot and applies the delta before working.*
 *v2.2 (2026-09-17): human-facing message rules, daemon-machine hygiene, restart protocol, Reviewer invocation, session-to-session seat messaging - all from the first two days of running a real project on v2.*
 
