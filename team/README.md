@@ -36,7 +36,8 @@ Your inputs arrive however they arrive - screenshots (often in a cloud folder), 
 7. **Git by path ownership** (table in TEAM.md). Stage explicit paths, never `git add -A`; commit only what you own, role in the message. Live data is production data.
 8. **Automation fails loudly and has an owner.** Unattended processes get a supervisor (launchd, not a terminal), a daily liveness glance (Tester), and failures must surface where you already look. Idle gaps can expire credentials - watch them.
 9. **Independent review is structural, not optional.** Code diffs pre-merge/deploy and numbers pre-deliverable go through the Reviewer. No role - the PM included - approves its own load-bearing claims.
-10. **Isolation and deploy discipline** (full text in TEAM.md): Tester tests committed states from detached checkouts only; deploys run from the current main tip, one at a time, under a lock note with heartbeats; work orders freeze while under verification; numbers travel with their arithmetic; secrets never touch an echoing surface.
+10. **Economy** (v2.5, full text in TEAM.md): the PM messages you only for actions, decisions and milestones; one verifier per claim; the Reviewer only for load-bearing diffs; three-line channel notes; no acknowledgements between seats.
+11. **Isolation and deploy discipline** (full text in TEAM.md): Tester tests committed states from detached checkouts only; deploys run from the current main tip, one at a time, under a lock note with heartbeats; work orders freeze while under verification; numbers travel with their arithmetic; secrets never touch an echoing surface.
 
 ## Start a project
 

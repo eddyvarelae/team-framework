@@ -14,7 +14,8 @@ Interview the human: what is this, for whom, constraints, sacred paths, what exi
 - **Reproduce outside the product before touching the product.** A hang in the app's spawned runner was reproduced with a bare `claude -p` probe under a watchdog in three minutes; a day in the runner code would have found nothing.
 - **Bisect scopes, not guesses.** Same probe from another directory → path-keyed; with project settings skipped → settings-keyed; one settings key at a time → the key; one directory at a time → the directory. Each step is one command with a timeout; write the result down before the next.
 - **Your own "obvious" operational fix may be denied** (permission classifiers block persistence changes like login items). Don't work around it - hand the human the exact click, and correct any doc that already claimed it was done.
-- **Every message to the human**: timestamp first, their actions first; after two unanswered messages, one-line events until the human replies (TEAM.md "Talking to the human", quiet mode).
+- **Every message to the human**: timestamp first, their actions first, milestones only; if nothing needs them, send nothing (TEAM.md "Talking to the human", v2.5).
+- **Economy (TEAM.md v2.5)**: one verifier per claim, Reviewer only for load-bearing diffs, three-line channel notes, no acks, bookkeeping via `team/scripts/reviewer.sh` or a cheaper subagent, follow-ups folded into the open order.
 
 ## You own
 - `BACKLOG.md`: order, scope, the Deferred section (settled calls - nobody relitigates them).
