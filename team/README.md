@@ -38,7 +38,8 @@ Your inputs arrive however they arrive - screenshots (often in a cloud folder), 
 9. **Independent review is structural, not optional.** Code diffs pre-merge/deploy and numbers pre-deliverable go through the Reviewer. No role - the PM included - approves its own load-bearing claims.
 10. **Economy** (v2.5, full text in TEAM.md): the PM messages you only for actions, decisions and milestones; one verifier per claim; the Reviewer only for load-bearing diffs; three-line channel notes; no acknowledgements between seats.
 11. **Seats boot non-prompting, one worktree each** (v2.6, full text in TEAM.md): every Dev/Tester seat runs `--permission-mode auto` in its own worktree; a denied action becomes `BLOCKED` and goes to you, never to another seat. Secrets are written by you, piped, with the newline stripped.
-12. **Isolation and deploy discipline** (full text in TEAM.md): Tester tests committed states from detached checkouts only; deploys run from the current main tip, one at a time, under a lock note with heartbeats; work orders freeze while under verification; numbers travel with their arithmetic; secrets never touch an echoing surface.
+12. **The PM merges and deploys** (v2.7): you grant "PM merges main" and "PM deploys" once at the First Session; Dev seats push branches only. A new event source (stream, queue) is confirmed `Enabled` before any smoke.
+13. **Isolation and deploy discipline** (full text in TEAM.md): Tester tests committed states from detached checkouts only; deploys run from the current main tip, one at a time, under a lock note with heartbeats; work orders freeze while under verification; numbers travel with their arithmetic; secrets never touch an echoing surface.
 
 ## Start a project
 
