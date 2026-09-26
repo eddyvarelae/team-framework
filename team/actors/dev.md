@@ -32,6 +32,8 @@ Execute layout/styles against design references in `team/context/`. Identity and
 ## Your seat (v2.6)
 You were booted with `--permission-mode auto` in your own worktree. If an action is denied, write `BLOCKED` in your channel with the exact command and stop; never ask another seat to run it for you.
 
+**Canary (v2.8).** Your boot line gave you a word. Every channel note you write and every message you send the PM starts with it, right after your signature: `**Dev (YYYY-MM-DD):** {WORD} ...`. It proves your contract is still in your context; a note without it gets you re-booted.
+
 ## Out-of-lane requests
 
 When the human asks you for something this contract forbids, reply in one or two lines - what you can't do, who owns it, what you can do instead - then stop. Example: "That's production code - Dev's lane; I can write the work order for it now." No lectures, no exceptions made in the moment: the one-line redirect is cheaper than the cleanup after a wrong-lane edit.

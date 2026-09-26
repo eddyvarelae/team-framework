@@ -39,14 +39,15 @@ Your inputs arrive however they arrive - screenshots (often in a cloud folder), 
 10. **Economy** (v2.5, full text in TEAM.md): the PM messages you only for actions, decisions and milestones; one verifier per claim; the Reviewer only for load-bearing diffs; three-line channel notes; no acknowledgements between seats.
 11. **Seats boot non-prompting, one worktree each** (v2.6, full text in TEAM.md): every Dev/Tester seat runs `--permission-mode auto` in its own worktree; a denied action becomes `BLOCKED` and goes to you, never to another seat. Secrets are written by you, piped, with the newline stripped.
 12. **The PM merges and deploys** (v2.7): you grant "PM merges main" and "PM deploys" once at the First Session; Dev seats push branches only. A new event source (stream, queue) is confirmed `Enabled` before any smoke.
-13. **Isolation and deploy discipline** (full text in TEAM.md): Tester tests committed states from detached checkouts only; deploys run from the current main tip, one at a time, under a lock note with heartbeats; work orders freeze while under verification; numbers travel with their arithmetic; secrets never touch an echoing surface.
+13. **Canary words and the health probe** (v2.8, full text in TEAM.md): your boot line gives the PM a word it starts every message with; the PM gives each seat a word it starts every note with. A missing word means a lost contract - `canary` to check, re-boot to fix. `team/scripts/health.sh` runs at the top of every PM cycle and fails loudly on stale framework copies, stale locks, silent orders, unanswered reviews and missing words.
+14. **Isolation and deploy discipline** (full text in TEAM.md): Tester tests committed states from detached checkouts only; deploys run from the current main tip, one at a time, under a lock note with heartbeats; work orders freeze while under verification; numbers travel with their arithmetic; secrets never touch an echoing surface.
 
 ## Start a project
 
-1. Copy `team/` into your project root. Boot the PM **on a Fable-class model**: *"You are the PM for {project}. Read team/TEAM.md and team/actors/pm.md - fresh project, run your First Session."*
+1. Copy `team/` into your project root. Pick a canary word - short, unusual, yours to remember, written nowhere in the repo. Boot the PM **on a Fable-class model**: *"You are the PM for {project}. Canary: {WORD}. Read team/TEAM.md and team/actors/pm.md - fresh project, run your First Session."* Every PM message will start with that word; one that does not has lost its contract.
 2. The PM sets everything up and boots Dev seats itself - long-lived seats open as **visible terminal windows** you can watch and type into, each in its own worktree, in non-prompting `auto` mode, with **Remote Control activated** so you can reach it from any machine; only short fan-out tasks run as invisible subagents, and never deploys or outside-facing work (full transport policy in TEAM.md). The PM flags when the Tester's activation criteria hit (user-visible surface, live side effects, or claims headed to outsiders).
 3. Wire the Reviewer: install a non-Claude CLI (e.g. Codex) and run it against `channels/review-requests.md` when the PM stages a request - or script it as a command the PM can trigger.
-4. Boot line for any actor: *"You are the {actor} for {project}. Read team/TEAM.md, team/actors/{actor}.md, then your channel."*
+4. Boot line for any actor (the PM normally issues these, with a fresh word per seat): *"You are the {actor} for {project}. Canary: {WORD}. Read team/TEAM.md, team/actors/{actor}.md, then your channel."*
 
 ## Optional actors
 

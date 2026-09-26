@@ -50,7 +50,7 @@ Every seat writes to channel files regardless of how it runs - the record's visi
 
 ## Talking to the human (v2.5 - economy)
 
-The human reads in bursts, hours apart, often from a phone, and the PM seat is the expensive one. **Every PM message starts with the day, date and time** (`date "+%a %Y-%m-%d %H:%M"`) **and contains only**: what the human must do (one line per item, with the PM's recommendation), and milestones (live, order done, blocked, incident). Seat traffic, verifications, review rounds and triage never reach the human as messages - the channels are the record. **If nothing needs the human and no milestone happened, the PM sends nothing.** When the human replies or asks for a summary: one line per open thread, then the `DECISIONS NEEDED` list once. A human item that stalls gets one re-escalation with a deadline, then silence until it actually blocks.
+The human reads in bursts, hours apart, often from a phone, and the PM seat is the expensive one. **Every PM message starts with the PM's canary word, then the day, date and time** (`date "+%a %Y-%m-%d %H:%M"`) **and contains only**: what the human must do (one line per item, with the PM's recommendation), and milestones (live, order done, blocked, incident). Seat traffic, verifications, review rounds and triage never reach the human as messages - the channels are the record. **If nothing needs the human and no milestone happened, the PM sends nothing.** When the human replies or asks for a summary: one line per open thread, then the `DECISIONS NEEDED` list once. A human item that stalls gets one re-escalation with a deadline, then silence until it actually blocks.
 
 ## Economy (v2.5 - learned 2026-09-25: one afternoon cost ~30 PM messages, 8 Reviewer runs and 3 verifications per claim)
 
@@ -60,6 +60,14 @@ The human reads in bursts, hours apart, often from a phone, and the PM seat is t
 4. **No acknowledgements.** The PM messages a seat only to issue or change an order or to unblock it. A seat messages the PM once per order (done, or blocked) - not per item, not per question. Non-blocking questions wait in the channel under the order.
 5. **Bookkeeping off the PM model.** Staging review requests, running the Reviewer (`team/scripts/reviewer.sh`), committing verdicts, moving resolved requests: a script or a cheaper subagent. The PM writes the falsification criteria and the one-line triage.
 6. **Follow-ups fold into the open order.** Findings and small fixes become items of the order in flight, not new revisions - a revision only when scope changes under verification (rule 4 above).
+
+## Canary words and the health probe (v2.8)
+
+**The PM's canary word.** The human's boot line gives the PM a word (`"You are the PM for {project}. Canary: {WORD}. Read team/TEAM.md ..."`). Every PM message to the human starts with that word, before the timestamp. The word lives only in the boot line - never in `team/`, never in a resume note, never in memory - so producing it proves the PM's boot context is still intact, not that it re-read a file. A message without the word means the PM has lost its instructions (compaction, memory bleed) or is not the PM at all. The human replies with the single word `canary`; the PM re-reads TEAM.md and its contract and answers with its word; if it cannot produce it, the boot context is gone: run the restart protocol.
+
+**Seat words.** The PM gives every seat it boots its own word in the seat's boot line (`"You are the Dev for {project}. Canary: {WORD}. Read team/TEAM.md, ..."`) and lists them in the Current state block (`Canary words: Dev=…, Tester=…`). A seat starts every message to the PM and every channel note with its word: `**Dev (2026-09-26):** {WORD} <hash> · <rung> · <evidence path>`. A note or message without it is the signal that the seat has drifted: the PM resends the boot line once; if the next note still lacks the word, the seat is restarted. Seat words are not secrets - they prove the contract is still in the seat's context. Short, unusual words that never occur in ordinary notes (Anvil, Heron), one per seat, new words at every reboot.
+
+**The health probe.** `team/scripts/health.sh`, run from the project root at the top of every PM cycle (and from launchd on a daemon machine, output pasted as a channel note), prints one line per check - `OK` / `WARN` / `FAIL` - and exits non-zero on any FAIL: framework checkout current and framework-owned files byte-identical; primary checkout on `main` with no stray edits outside `team/`; no lock held past 30 min; no active work order silent past 24 h; no review request awaiting a verdict or carrying unresolved FINDINGS; every seat's newest note carries its canary word. The PM acts on every FAIL before other work and never re-derives by hand what the probe printed. So the probe can read them, lock notes are lines of the form `LOCK <what> <date -Iseconds>` and `UNLOCK <what> <date -Iseconds>` in the deployer's channel, and review requests are `### RR-n` headings under OPEN REQUESTS.
 
 ## Machines that run things unattended (daemon-machine hygiene)
 
@@ -82,7 +90,7 @@ Learned on a Mac Mini running a scheduled-runner app; generalize to any always-o
 
 ## Startup ritual (every session)
 
-0. **Framework first (PM, every session, before reading anything else).** The framework this `team/` was copied from lives at **`~/Projects/team-framework`** (`git@github.com:eddyvarelae/team-framework.git`; clone it there if absent). Run `git -C ~/Projects/team-framework fetch -q origin && git -C ~/Projects/team-framework log --oneline HEAD..origin/main`. Anything printed → pull, read the diff, apply the delta to this `team/` (framework-owned files - `README.md`, `actors/*`, unused channel templates, `diagram.*` - are byte-copies; `TEAM.md` gets the hunks around the project's own fills), note the version in your first channel note, and commit that before any other work. The framework moves between sessions; a PM on a stale copy runs stale rules.
+0. **Framework first (PM, every session, before reading anything else).** The framework this `team/` was copied from lives at **`~/Projects/team-framework`** (`git@github.com:eddyvarelae/team-framework.git`; clone it there if absent). Run `git -C ~/Projects/team-framework fetch -q origin && git -C ~/Projects/team-framework log --oneline HEAD..origin/main`. Anything printed → pull, read the diff, apply the delta to this `team/` (framework-owned files - `README.md`, `actors/*`, unused channel templates, `diagram.*` - are byte-copies; `TEAM.md` gets the hunks around the project's own fills), note the version in your first channel note, and commit that before any other work. The framework moves between sessions; a PM on a stale copy runs stale rules. Then run `team/scripts/health.sh` and clear every FAIL (v2.8).
 1. Read this file, then `team/actors/{your-role}.md`.
 2. Read the Current state block below; on your first session also all of `team/context/`.
 3. Read your channel's top note - that's your work order.
@@ -90,5 +98,7 @@ Learned on a Mac Mini running a scheduled-runner app; generalize to any always-o
 5. Memory: trust only entries namespaced to your role; others' entries are background, not your identity.
 
 ## Current state ({date} - PM-verified, don't re-derive)
+
+Canary words: (none - no seats booted)
 
 (new project - nothing yet)
