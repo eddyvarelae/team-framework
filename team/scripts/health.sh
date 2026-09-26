@@ -37,7 +37,7 @@ outside=$(git status --porcelain | awk '{print $NF}' | grep -v '^team/' | head -
 if [ -z "$outside" ]; then ok "primary checkout: no uncommitted changes outside team/"
 else warn "primary checkout has uncommitted changes outside team/ (a seat working in the PM's checkout?): $outside"; fi
 
-# 3. Locks: 'LOCK <what> <date -Iseconds>' / 'UNLOCK <what> <date -Iseconds>' anywhere on a channel line (after the signature and canary word).
+# 3. Locks: 'LOCK <what> <date -Iseconds>' / 'UNLOCK <what> <date -Iseconds>' anywhere on a channel line (after the signature and canary word). The latest event per lock by timestamp wins, whatever the file order (channels are newest-first).
 python3 - "$LOCK_MAX_MIN" <<'PY' || fail=1
 import re, sys, glob, datetime
 mx = int(sys.argv[1]); now = datetime.datetime.now(datetime.timezone.utc); held = {}; bad = 0
@@ -46,14 +46,16 @@ for f in sorted(glob.glob('team/channels/*.md')):
         m = re.search(r'\b(UN)?LOCK\s+(\S+)\s+(\d{4}-\d\d-\d\dT\d\d:\d\d(?::\d\d)?(?:[+-]\d\d:?\d\d|Z)?)', line)
         if not m: continue
         key = (f, m.group(2))
-        if m.group(1): held.pop(key, None); continue
         ts = m.group(3).replace('Z', '+00:00')
         try: t = datetime.datetime.fromisoformat(ts)
         except ValueError: print(f"WARN lock {m.group(2)} in {f}: unparseable timestamp {m.group(3)} (use date -Iseconds)"); continue
         if t.tzinfo is None: t = t.astimezone()
-        held[key] = t
-if not held: print("OK   locks: none held")
-for (f, what), t in held.items():
+        # Channels are newest-first, so file order says nothing: the latest event BY TIMESTAMP decides (v2.8.1).
+        prev = held.get(key)
+        if prev is None or t >= prev[0]: held[key] = (t, bool(m.group(1)))
+open_locks = {k: v[0] for k, v in held.items() if not v[1]}
+if not open_locks: print("OK   locks: none held")
+for (f, what), t in open_locks.items():
     age = int((now - t).total_seconds() // 60)
     if age > mx: print(f"FAIL lock {what} held {age} min in {f} (max {mx}) - chase the holder or revert the lock"); bad = 1
     else: print(f"OK   lock {what} held {age} min in {f}")
