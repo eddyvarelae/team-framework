@@ -2,7 +2,8 @@
 # team/scripts/health.sh - the health probe (v2.8). Run from the project root at the top of every PM
 # cycle, or from launchd on a daemon machine. One line per check: OK / WARN / FAIL. Exit 1 on any FAIL.
 # Checks: framework currency + byte-copies · primary checkout · locks · silent orders · review requests ·
-# seat canary words. Thresholds via env: LOCK_MAX_MIN=30 NOTE_MAX_H=24. Needs git and python3.
+# seat canary words · lane tripwire (v2.9: sentinels, commits and seat worktrees inside the path table, no rewritten notes).
+# Thresholds via env: LOCK_MAX_MIN=30 NOTE_MAX_H=24 HEALTH_SINCE=24.hours. Needs git and python3.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "FAIL not inside a git checkout"; exit 1; }
 FW="${TEAM_FRAMEWORK:-$HOME/Projects/team-framework}"
@@ -108,6 +109,108 @@ for role, word in words.items():
     missing = [w for w in latest if w.strip('*_`').rstrip('.,:;') != word]
     if missing: print(f"FAIL canary {role}={word}: {len(missing)}/{len(latest)} note(s) dated {newest} lack it - resend the boot line once, restart the seat if the next note still lacks it"); bad = 1
     else: print(f"OK   canary {role}={word}: newest note(s) ({newest}) carry it")
+raise SystemExit(bad)
+PY
+
+
+# 7. Lane tripwire (v2.9): sentinel line 1 on shared files; commits (message 'Role: ...') and seat worktrees stay inside the
+#    Path ownership table in TEAM.md; nobody deletes or alters another role's signed note (appending and ~~striking~~ are fine).
+python3 - "$FW" "${HEALTH_SINCE:-24.hours}" <<'PY' || fail=1
+import os, re, sys, glob, fnmatch, subprocess
+FW, SINCE = sys.argv[1], sys.argv[2]; bad = 0
+def run(*a, cwd=None): return subprocess.run(a, capture_output=True, text=True, cwd=cwd).stdout
+top = run('git', 'rev-parse', '--show-toplevel').strip()
+ROLES = {'pm': 'PM', 'dev': 'Dev', 'tester': 'Tester', 'reviewer': 'Reviewer', 'designer': 'Designer', 'cloud': 'Cloud', 'human': 'Human'}
+def role_of(s): return ROLES.get(re.sub(r'\d+$', '', s.strip().strip('*').strip()).lower())
+
+# 7a. Sentinels.
+shared = ['team/BACKLOG.md', 'team/DECISIONS.md'] + sorted(glob.glob('team/channels/*.md'))
+missing = [f for f in shared if open(f, encoding='utf-8').readline().rstrip('\n') != f'<!-- lane sentinel · {f} · never edit, move or delete this line -->']
+if missing: print("FAIL lane sentinel missing or altered on line 1 (file rewritten wholesale, or a pre-v2.9 copy - restore the line): " + ", ".join(missing)); bad = 1
+else: print("OK   lane sentinels intact on " + str(len(shared)) + " shared files")
+if os.path.realpath(top) == os.path.realpath(FW): print("OK   lane checks on commits and worktrees skipped (this is the framework repo)"); raise SystemExit(bad)
+
+# 7b. Path table.
+txt = open('team/TEAM.md', encoding='utf-8').read()
+sec = txt.split('## Path ownership', 1)[1].split('\n## ', 1)[0] if '## Path ownership' in txt else ''
+table, unfilled = {}, []
+for line in sec.splitlines():
+    cells = [c.strip() for c in line.strip().strip('|').split('|')]
+    if len(cells) < 2 or set(cells[0]) <= set('-: ') or cells[0].lower().strip('*') == 'role': continue
+    role = role_of(cells[0].split()[0]) if cells[0].strip() else None
+    if not role: continue
+    globs = []
+    for g in re.split(r'[,\n]', cells[1]):
+        g = g.strip().strip('`').strip()
+        if not g: continue
+        if '{' in g: unfilled.append(f"{role}: {g}"); continue
+        globs.append(g.rstrip('/'))
+    table[role] = globs
+COMMON = ['team/DECISIONS.md']
+def allowed(role, path):
+    for g in table.get(role, []) + COMMON:
+        if path == g or path.startswith(g + '/') or fnmatch.fnmatch(path, g): return True
+    return False
+if unfilled: print("WARN path table has unfilled placeholders (lane checks skip those roles' paths): " + "; ".join(unfilled))
+if not table: print("WARN no Path ownership table found in TEAM.md - lane checks on commits and worktrees skipped"); raise SystemExit(bad)
+
+# 7c. Commits since HEALTH_SINCE: role prefix, paths inside the role's globs.
+unattributed, viol = [], []
+for rec in run('git', 'log', f'--since={SINCE}', '--no-merges', '--format=%h%x00%s').splitlines():
+    h, subj = rec.split('\x00', 1)
+    m = re.match(r'\s*([A-Za-z]+\d*)\s*:', subj); role = role_of(m.group(1)) if m else None
+    if not role: unattributed.append(h); continue
+    if role == 'Human': continue
+    files = [f for f in run('git', 'show', '--format=', '--name-only', h).splitlines() if f]
+    out = [f for f in files if not allowed(role, f)]
+    if out: viol.append(f"{h} {role}: {' '.join(out)}")
+    # 7d. Another role's signed note deleted or altered in a channel file.
+    chan = [f for f in files if f.startswith('team/channels/')]
+    if not chan: continue
+    diff = run('git', 'diff', '-U0', f'{h}^', h, '--', *chan)
+    cur, olds, oldno, removed, added, hunks = None, {}, 0, [], [], []
+    def flush():
+        if removed or added: hunks.append((cur, list(removed), list(added)))
+        removed.clear(); added.clear()
+    for line in diff.splitlines():
+        if line.startswith('--- '): flush(); continue
+        if line.startswith('+++ '): cur = line[4:].lstrip('b/'); olds[cur] = run('git', 'show', f'{h}^:{cur}').split('\n'); continue
+        hm = re.match(r'@@ -(\d+)', line)
+        if hm: flush(); oldno = int(hm.group(1)); continue
+        if line.startswith('-'): removed.append((oldno, line[1:])); oldno += 1
+        elif line.startswith('+'): added.append(line[1:])
+    flush()
+    for f, rem, add in hunks:
+        old = olds.get(f, [])
+        for n, text in rem:
+            owner = None
+            for i in range(min(n, len(old)) - 1, -1, -1):
+                sm = re.match(r'\s*\*\*(\w+) \(\d{4}-\d\d-\d\d\):\*\*', old[i])
+                if sm: owner = role_of(sm.group(1)); break
+                if old[i].startswith('## '): break
+            core = text.strip().strip('~').strip()
+            if owner and owner != role and core and not any(core in a for a in add):
+                viol.append(f"{h} {role} altered a {owner} note in {f}: '{core[:60]}'")
+if unattributed: print("WARN commits without a 'Role:' prefix (lane unchecked): " + " ".join(unattributed))
+if viol:
+    for v in viol: print("FAIL lane: " + v)
+    bad = 1
+else: print(f"OK   lane: commits since {SINCE} stay inside the path table and nobody altered another role's note")
+
+# 7e. Seat worktrees: on their own branch, uncommitted changes inside the seat's globs.
+for block in run('git', 'worktree', 'list', '--porcelain').strip().split('\n\n'):
+    kv = dict(l.split(' ', 1) if ' ' in l else (l, '') for l in block.splitlines())
+    path = kv.get('worktree', '')
+    if not path or os.path.realpath(path) == os.path.realpath(top): continue
+    seat = os.path.basename(path.rstrip('/')).split('-')[-1]; role = role_of(seat)
+    if not role or role not in table: print(f"WARN worktree {path}: cannot map to a role in the path table (name it <project>-<seat>)"); continue
+    if kv.get('branch') == 'refs/heads/main': print(f"FAIL worktree {path} ({role}) is on main - seats work on their own branch"); bad = 1
+    files = []
+    for l in run('git', 'status', '--porcelain', cwd=path).splitlines():
+        files.append(l[3:].split(' -> ')[-1].strip('"'))
+    out = [f for f in files if not allowed(role, f)]
+    if out: print(f"FAIL worktree {path} ({role}) has uncommitted changes outside its paths: {' '.join(out[:6])}"); bad = 1
+    else: print(f"OK   worktree {path} ({role}): {len(files)} uncommitted file(s), all inside its paths")
 raise SystemExit(bad)
 PY
 

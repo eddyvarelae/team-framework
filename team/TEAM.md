@@ -67,7 +67,9 @@ The human reads in bursts, hours apart, often from a phone, and the PM seat is t
 
 **Seat words.** The PM gives every seat it boots its own word in the seat's boot line (`"You are the Dev for {project}. Canary: {WORD}. Read team/TEAM.md, ..."`) and lists them in the Current state block (`Canary words: Dev=…, Tester=…`). A seat starts every message to the PM and every channel note with its word: `**Dev (2026-09-26):** {WORD} <hash> · <rung> · <evidence path>`. A note or message without it is the signal that the seat has drifted: the PM resends the boot line once; if the next note still lacks the word, the seat is restarted. Seat words are not secrets - they prove the contract is still in the seat's context. Short, unusual words that never occur in ordinary notes (Anvil, Heron), one per seat, new words at every reboot.
 
-**The health probe.** `team/scripts/health.sh`, run from the project root at the top of every PM cycle (and from launchd on a daemon machine, output pasted as a channel note), prints one line per check - `OK` / `WARN` / `FAIL` - and exits non-zero on any FAIL: framework checkout current and framework-owned files byte-identical; primary checkout on `main` with no stray edits outside `team/`; no lock held past 30 min; no active work order silent past 24 h; no review request awaiting a verdict or carrying unresolved FINDINGS; every seat's newest note carries its canary word. The PM acts on every FAIL before other work and never re-derives by hand what the probe printed. So the probe can read them, lock notes are lines of the form `LOCK <what> <date -Iseconds>` and `UNLOCK <what> <date -Iseconds>` in the deployer's channel, and review requests are `### RR-n` headings under OPEN REQUESTS.
+**The lane tripwire (v2.9).** Shared files (`BACKLOG.md`, `DECISIONS.md`, every channel) carry a sentinel as line 1; a changed or missing sentinel means the file was rewritten wholesale instead of appended to. The health probe reads the Path ownership table below and fails any commit of the last 24 h (`HEALTH_SINCE`) whose `Role:` prefix does not own every path it touched, any seat worktree with uncommitted changes outside its paths or sitting on `main`, and any commit that deleted or reworded another role's signed note. Commits without a role prefix are reported, not judged.
+
+**The health probe.** `team/scripts/health.sh`, run from the project root at the top of every PM cycle (and from launchd on a daemon machine, output pasted as a channel note), prints one line per check - `OK` / `WARN` / `FAIL` - and exits non-zero on any FAIL: framework checkout current and framework-owned files byte-identical; primary checkout on `main` with no stray edits outside `team/`; no lock held past 30 min; no active work order silent past 24 h; no review request awaiting a verdict or carrying unresolved FINDINGS; every seat's newest note carries its canary word; the lane tripwire above. The PM acts on every FAIL before other work and never re-derives by hand what the probe printed. So the probe can read them, lock notes are lines of the form `LOCK <what> <date -Iseconds>` and `UNLOCK <what> <date -Iseconds>` in the deployer's channel, and review requests are `### RR-n` headings under OPEN REQUESTS.
 
 ## Machines that run things unattended (daemon-machine hygiene)
 
@@ -79,14 +81,16 @@ Learned on a Mac Mini running a scheduled-runner app; generalize to any always-o
 - **No build artifacts, `.app` bundles or installers in `~/Downloads`** on the daemon machine, and don't hand `~/Downloads` to every run - directory enumeration there blocked every headless tool call for an hour (Gatekeeper/XProtect suspected) and stayed intermittent.
 - **Restart protocol.** Before a planned restart the PM: tells every seat to commit + post a state note (5 min), writes `team/context/resume-<date>.md` (boot order, a pending table with owner + state, the traps a new PM must not re-derive), updates the Current state block, commits everything, then hands the human the boot line for the new PM. Seats don't survive a restart; files do.
 
-## Path ownership (required before Dev's first commit)
+## Path ownership (required before Dev's first commit - the health probe enforces this table, v2.9)
+
+Second column: comma-separated paths or globs from the repo root (`src/*` covers everything under `src/`). Every commit message starts with its role (`Dev: ...`, `PM: ...`, `Reviewer: ...`; `Human:` is unchecked); the probe fails any commit or seat worktree that touches a path outside its row. `team/DECISIONS.md` is writable by every role (whoever hears a decision logs it). Inside channel files, the signed note is the unit of ownership: appending to or ~~striking~~ another role's note is fine, deleting or rewording it is a lane violation.
 
 | Role | Writable paths |
 |---|---|
-| PM | everything under `team/` except other roles' channel notes |
-| Dev | {source paths}, its channel notes |
-| Tester | `channels/tester-feedback.md`, external-agent files, `DECISIONS.md` entries |
-| Reviewer | `channels/review-requests.md` answers only |
+| PM | `team/*` |
+| Dev | `{source paths, e.g. src/*, package.json}`, `team/channels/dev-questions.md`, `team/BACKLOG.md`, `team/evidence/dev/*`, `{conventions doc, e.g. CLAUDE.md}` |
+| Tester | `team/channels/tester-feedback.md`, `team/evidence/tester/*`, `{external-agent files}` |
+| Reviewer | `team/channels/review-requests.md` |
 
 ## Startup ritual (every session)
 

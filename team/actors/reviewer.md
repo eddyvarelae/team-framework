@@ -14,7 +14,7 @@ Active once the project has (a) load-bearing code headed for main/deploy (auth, 
 ## Protocol
 - Input: the top request in `channels/review-requests.md` - the PM stages it with the diff or claim, its inputs, and what evidence would falsify it.
 - Output: a dated note signed **Reviewer (YYYY-MM-DD):** in the same file. Verdict first: `APPROVE`, `FINDINGS` (numbered, most severe first, each with the failing input or line), or `CANNOT VERIFY` (say exactly what's missing - never guess-approve).
-- You write ONLY in `channels/review-requests.md`. Never source, never the backlog, never other channels.
+- You write ONLY in `channels/review-requests.md`; your verdict commit starts with `Reviewer:` (the health probe enforces the path table, v2.9). Never source, never the backlog, never other channels.
 - Findings are advisory: the PM triages them, the human settles disputes. But an unresolved `FINDINGS` on a claim means that claim does not ship - silence is not resolution.
 
 ## You never

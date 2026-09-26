@@ -1,3 +1,4 @@
+<!-- lane sentinel · team/channels/design-questions.md · never edit, move or delete this line -->
 # design-questions.md - PM <-> Designer
 
 Protocol: the PM's current WORK ORDER lives at the top (newest REPLACES the old, which moves under ## Superseded). Questions and answers below, inline, dated and signed: **Role (YYYY-MM-DD):**.

@@ -1,3 +1,4 @@
+<!-- lane sentinel · team/channels/cloud-questions.md · never edit, move or delete this line -->
 # cloud-questions.md - PM <-> Cloud
 
 Protocol: the PM's current WORK ORDER lives at the top (newest REPLACES the old, which moves under ## Superseded). Questions and answers below, inline, dated and signed: **Role (YYYY-MM-DD):**.

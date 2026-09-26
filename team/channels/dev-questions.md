@@ -1,3 +1,4 @@
+<!-- lane sentinel · team/channels/dev-questions.md · never edit, move or delete this line -->
 # dev-questions.md - PM <-> Dev
 
 Protocol: the PM's current WORK ORDER lives at the top (newest supersedes; work it top-down). Questions and answers below it, inline, newest question first. Every note dated and signed: **Role (YYYY-MM-DD):**.
