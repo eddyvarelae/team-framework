@@ -48,6 +48,7 @@ Your inputs arrive however they arrive - screenshots (often in a cloud folder), 
 2. The PM sets everything up and boots Dev seats itself - long-lived seats open as **visible terminal windows** you can watch and type into, each in its own worktree, in non-prompting `auto` mode, with **Remote Control activated** so you can reach it from any machine; only short fan-out tasks run as invisible subagents, and never deploys or outside-facing work (full transport policy in TEAM.md). The PM flags when the Tester's activation criteria hit (user-visible surface, live side effects, or claims headed to outsiders).
 3. Wire the Reviewer: install a non-Claude CLI (e.g. Codex) and run it against `channels/review-requests.md` when the PM stages a request - or script it as a command the PM can trigger.
 4. Boot line for any actor (the PM normally issues these, with a fresh word per seat): *"You are the {actor} for {project}. Canary: {WORD}. Read team/TEAM.md, team/actors/{actor}.md, then your channel."*
+   - On Eddy's Macs the mechanics of opening a session (own Terminal window, `--name` + `--remote-control` with the same `MINI - <project> - <role>` name, the model by role, and pre-trusting the folder in `~/.claude.json` so the first-run prompt does not hide the session from Remote Control) are in the `spin-up-agent` skill (`~/Projects/skills/spin-up-agent`).
 
 ## Optional actors
 
