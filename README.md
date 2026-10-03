@@ -1,5 +1,6 @@
 # Team Framework
 
+*v2.9.1 (2026-10-02): health probe - a seat worktree's untracked files are checked by full path (`git status -uall`); a seat's first evidence file under `team/evidence/<seat>/` no longer trips the lane check as `team/evidence/`.*
 *v2.9 (2026-09-26): lane tripwire - sentinel line 1 on shared files; the health probe enforces the path table on every `Role:` commit and seat worktree and trips when another role's note is deleted or reworded.*
 *v2.8 (2026-09-26): canary words - the PM starts every message with the word from its boot line, seats start every note with theirs; a missing word means a lost contract. `scripts/health.sh` fails loudly on stale framework copies, stale locks, silent orders, unanswered reviews and missing words.*
 *v2.7 (2026-09-26): the PM merges main and deploys by default, on standing grants given at the First Session; a new event source is confirmed Enabled before smoking.*
