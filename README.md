@@ -12,10 +12,10 @@
 
 Run a project with a small team of AI agent sessions - PM (the driver, Fable-class), Dev seats (Opus-class), Tester, an external non-Claude Reviewer (Codex or equivalent), plus optional Designer/Cloud. The PM drives the loop; you make the decisions. All framework machinery lives in one folder: **`team/`**.
 
-To use: copy `team/` into your project's root, then boot the PM on a Fable-class model:
+To use: copy `team/` into your project's root, then boot the PM on a Fable-class model, non-prompting:
 
-> "You are the PM for {project}. Canary: {WORD}. Read team/TEAM.md and team/actors/pm.md - fresh project, run your First Session."
+> `claude --model fable --permission-mode auto` "You are the PM for {project}. Canary: {WORD}. Read team/TEAM.md and team/actors/pm.md - fresh project, run your First Session."
 
-`{WORD}` is a canary word you pick and write nowhere: every PM message starts with it, and one that does not has lost its contract.
+`{WORD}` is a canary word you pick and write nowhere: every PM message starts with it, and one that does not has lost its contract. `--permission-mode auto` is as mandatory for the PM as v2.6 made it for seats: a default-mode PM stalls on approval prompts the moment the human looks away (it cost weeks of hovering before v2.9.2 extended the rule to the PM, 2026-10-14).
 
 Everything else: `team/README.md` (~10-minute read: it + TEAM.md + the core actor contracts).
