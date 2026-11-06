@@ -16,7 +16,9 @@ set -uo pipefail
 MODE="${1:-stop}"
 [ "${PM_GUARD_OFF:-0}" = 1 ] && exit 0
 input="$(cat 2>/dev/null || true)"
-cd "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || exit 0
+# The project is where this script lives (team/scripts/..), not the hook's cwd: a PM session started one directory
+# up (it happens) still guards the right repo when the hook command uses the script's absolute path.
+cd "$(cd "$(dirname "$0")/../.." && pwd)" 2>/dev/null || exit 0
 [ -f team/TEAM.md ] || exit 0
 # Primary checkout only: in a linked worktree --git-dir is .git/worktrees/<name>, in the primary it equals the common dir.
 [ "$(git rev-parse --git-dir)" = "$(git rev-parse --git-common-dir)" ] || exit 0
