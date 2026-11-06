@@ -2,7 +2,8 @@
 # team/scripts/health.sh - the health probe (v2.8). Run from the project root at the top of every PM
 # cycle, or from launchd on a daemon machine. One line per check: OK / WARN / FAIL. Exit 1 on any FAIL.
 # Checks: framework currency + byte-copies · primary checkout · locks · silent orders · review requests ·
-# seat canary words · lane tripwire (v2.9: sentinels, commits and seat worktrees inside the path table, no rewritten notes).
+# seat canary words · lane tripwire (v2.9: sentinels, commits and seat worktrees inside the path table, no rewritten notes) ·
+# pm-guard hooks installed in the primary checkout (v2.10).
 # Thresholds via env: LOCK_MAX_MIN=30 NOTE_MAX_H=24 HEALTH_SINCE=24.hours. Needs git and python3.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "FAIL not inside a git checkout"; exit 1; }
@@ -215,5 +216,19 @@ for block in run('git', 'worktree', 'list', '--porcelain').strip().split('\n\n')
     else: print(f"OK   worktree {path} ({role}): {len(files)} uncommitted file(s), all inside its paths")
 raise SystemExit(bad)
 PY
+
+# 8. The PM's message guard (v2.10): hooks wired in .claude/settings.json of the primary checkout, script executable.
+if [ "$(git rev-parse --git-dir)" = "$(git rev-parse --git-common-dir)" ] && [ "$(realpath "$(pwd)")" != "$(realpath "$FW")" ]; then
+  if [ -x team/scripts/pm-guard.sh ] && python3 - <<'PYG' 2>/dev/null
+import json
+d = json.load(open('.claude/settings.json'))
+h = d.get('hooks', {})
+need = {'SessionStart': 'session', 'UserPromptSubmit': 'prompt', 'Stop': 'stop'}
+ok = all(any(x.get('command') == f'bash team/scripts/pm-guard.sh {m}' for g in h.get(e, []) for x in g.get('hooks', [])) for e, m in need.items())
+raise SystemExit(0 if ok else 1)
+PYG
+  then ok "pm-guard hooks installed (SessionStart, UserPromptSubmit, Stop)"
+  else bad "pm-guard hooks missing - the human runs team/scripts/install-hooks.sh from the project root, then the PM restarts its session"; fi
+fi
 
 exit $fail
