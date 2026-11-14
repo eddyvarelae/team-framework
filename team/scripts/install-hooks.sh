@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# team/scripts/install-hooks.sh - wire team/scripts/pm-guard.sh into the project's .claude/settings.json (v2.10).
-# Run by the HUMAN (or the spin-up recipe) from the project root before the PM's first session: the auto-mode
-# classifier refuses a session that edits its own permission or hook settings, so the PM cannot do this itself.
+# team/scripts/install-hooks.sh - wire team/scripts/pm-guard.sh into the project's .claude/settings.json (v2.11).
+# Run by the PM ITSELF at the First Session or on the health probe's FAIL (v2.11; the human's act before that).
+# If the permission layer refuses the settings write, the PM hands this one-liner to the human - never works around it.
 # Idempotent; keeps every other key (permissions, existing hooks). The hooks run in every worktree but pm-guard.sh
 # exits at once outside the primary checkout, so seats are unaffected.
 # Usage: team/scripts/install-hooks.sh            -> .claude/settings.json of this project (committed; relative command)
@@ -28,4 +28,4 @@ for event, mode in want.items():
 json.dump(d, open(p, 'w'), indent=2); open(p, 'a').write('\n')
 print(f"installed pm-guard hooks in {p} (SessionStart, UserPromptSubmit, Stop)")
 PY
-echo "Restart the PM session (or start it now) so the hooks load. Verify: team/scripts/health.sh prints 'OK   pm-guard hooks installed'."
+echo "Hooks bind at session start: the installing PM session runs on discipline until its next boot. Verify: team/scripts/health.sh prints 'OK   pm-guard hooks installed'."

@@ -228,7 +228,7 @@ ok = all(any(x.get('command') == f'bash team/scripts/pm-guard.sh {m}' for g in h
 raise SystemExit(0 if ok else 1)
 PYG
   then ok "pm-guard hooks installed (SessionStart, UserPromptSubmit, Stop)"
-  else bad "pm-guard hooks missing - the human runs team/scripts/install-hooks.sh from the project root, then the PM restarts its session"; fi
+  else bad "pm-guard hooks missing - the PM runs team/scripts/install-hooks.sh from the project root itself (v2.11); the guard binds at its next session start"; fi
 fi
 
 exit $fail
